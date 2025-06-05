@@ -2,9 +2,17 @@ import re
 from http import HTTPStatus
 
 import httpx
+import pytest
 from pytest_httpx import HTTPXMock
 
-from src.eutils_retrieval.search import PMC_DATABASE_URL, URL_SEARCH_TAIL, pmc_search_and_store
+from src.eutils_retrieval.search import (
+    PMC_DATABASE_URL,
+    URL_SEARCH_TAIL,
+    pmc_search_and_store,
+    extract_one_article_ids,
+    ArticleIds,
+    extract_all_article_ids,
+)
 
 
 def test_pmc_search_and_store_ok(httpx_mock: HTTPXMock, search_and_store_response):
@@ -49,3 +57,37 @@ def test_pmc_search_and_store_error(httpx_mock: HTTPXMock):
     with httpx.Client():
         result = pmc_search_and_store("my query")
         assert result is None
+
+
+@pytest.mark.parametrize(
+    "uid, article_data, expected",
+    (
+        ("1", {"not the right key": 1}, {}),
+        (
+            "1",
+            {"articleids": [{"idtype": "pmid", "value": "1"}]},
+            ArticleIds(pmcid="PMC1", pmid="1"),
+        ),
+        (
+            "PMC_OTHER_1",
+            {"articleids": [{"idtype": "pmid", "value": "0"}]},
+            ArticleIds(pmcid="PMC_OTHER_1", pmid=None),
+        ),
+    ),
+)
+def test_extract_one_article_ids(uid, article_data, expected):
+    result = extract_one_article_ids(uid, article_data)
+    assert result == expected
+
+
+def test_extract_all_article_ids():
+    articles = {
+        "uids": ["0", "1", "2", "PMC_OTHER_1"],
+        "0": {"not the right key": 1},
+        "1": {"articleids": [{"idtype": "pmid", "value": "1"}]},
+        "PMC_OTHER_1": {"articleids": [{"idtype": "pmid", "value": "0"}]},
+    }
+    expected = [ArticleIds(pmcid="PMC1", pmid="1"), ArticleIds(pmcid="PMC_OTHER_1", pmid=None)]
+
+    result = extract_all_article_ids(articles)
+    assert result == expected

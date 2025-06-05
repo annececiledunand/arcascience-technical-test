@@ -18,6 +18,13 @@ class PMCStorageInfos(TypedDict):
     query_key: NotRequired[str]
 
 
+class ArticleIds(TypedDict):
+    """Article ids from both PMC and PubMed databases"""
+
+    pmcid: str
+    pmid: str | None
+
+
 def pmc_search_and_store(query: str) -> PMCStorageInfos | None:
     """
     Search PMC database and ask to store them for later retrieval, for articles matching the given query.
@@ -140,6 +147,58 @@ def search_pmc(query: str) -> list[dict]:
         # logger.exception in loguru is a ERROR level message and capture exception in message
         logger.exception("Error processing PMC search")
         return []
+
+
+def extract_all_article_ids(articles: dict) -> list[ArticleIds]:
+    """Extract and format PubMed and PMC ids for a given article
+
+    Args:
+        articles (dict): all articles data in PMC database. Has one key `uids` with list of uids (str) as value, other keys are `uid` with {article_data_dict} as value
+
+    Returns:
+        list of ArticleIds
+    """
+    uids = articles.pop("uids")  # uids key with list of all uids as key:value in dict
+    if set(uids) != set(articles.keys()):
+        logger.warning(
+            f"Difference between results and uids list given\n"
+            f"Uids given in list: {len(set(uids))}\n"
+            f"Uids as keys for result: {len(set(articles.keys()))}"
+        )
+
+    results = []
+    for uid, article_data in articles.items():
+        if article_result := extract_one_article_ids(uid, article_data):
+            results.append(article_result)
+
+    return results
+
+
+def extract_one_article_ids(uid: str, article_data: dict) -> ArticleIds:
+    """Extract and format PubMed and PMC ids for a given article
+
+    Args:
+        uid (str): PMC uid of the current article
+        article_data (dict): all data in PMC database re lated to the article
+
+    Returns:
+        ArticleIds
+    """
+    # Extract PMID if available
+    pmid = None
+    if "articleids" not in article_data:
+        return {}
+
+    for article_id in article_data["articleids"]:
+        if article_id["idtype"] == "pmid" and article_id["value"] != "0":
+            pmid = article_id["value"]
+
+    # Format PMCID
+    formatted_pmcid = uid
+    if not str(formatted_pmcid).startswith("PMC"):
+        formatted_pmcid = f"PMC{uid}"
+
+    return ArticleIds(pmcid=formatted_pmcid, pmid=pmid)
 
 
 def search_pubmed_pmc(
