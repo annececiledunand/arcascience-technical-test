@@ -1,3 +1,4 @@
+import httpx
 import requests
 from loguru import logger
 
@@ -5,6 +6,8 @@ from typing import TypedDict, NotRequired
 
 
 PMC_DATABASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
+URL_SEARCH_TAIL = "esearch.fcgi"
+URL_SUMMARY_TAIL = "esummary.fcgi"
 
 
 class PMCStorageInfos(TypedDict):
@@ -37,13 +40,12 @@ def pmc_search_and_store(query: str) -> PMCStorageInfos | None:
 
     logger.debug(f"Search and store params:\n{search_params}")
 
-    session = requests.Session()
-    url = f"{PMC_DATABASE_URL}esearch.fcgi"
+    url = f"{PMC_DATABASE_URL}{URL_SEARCH_TAIL}"
 
-    search_response = session.get(url, params=search_params)
+    search_response = httpx.get(url, params=search_params)
     if search_response.status_code != 200:
         logger.error(
-            f"Error searching PMC: ({search_response.status_code}){search_response.reason}"
+            f"Error searching PMC: ({search_response.status_code}){search_response.reason_phrase}"
         )
         return None  # todo: maybe raise exception here
 
@@ -94,7 +96,9 @@ def search_pmc(query: str) -> list[dict]:
             "retmode": "json",
         }
 
-        summary_response = session.get(f"{PMC_DATABASE_URL}esummary.fcgi", params=summary_params)
+        summary_response = session.get(
+            f"{PMC_DATABASE_URL}{URL_SUMMARY_TAIL}", params=summary_params
+        )
         if summary_response.status_code != 200:
             logger.error(f"Error retrieving PMC results: {summary_response.status_code}")
             return []
