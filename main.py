@@ -3,6 +3,7 @@ from src.eutils_retrieval.search import search_pubmed_pmc
 import json
 import os
 import time
+from loguru import logger
 
 
 def create_query(devices, indicators):
@@ -33,7 +34,7 @@ def main():
 
     # search for articles in the specified date range (only 2023 for now)
     results = search_pubmed_pmc(query, start_year=2023, end_year=2023)
-    print(f"Found {len(results)} results, took {time.time() - start} seconds")
+    logger.success(f"Found {len(results)} results, took {time.time() - start} seconds")
 
     # Save the results to a JSON file
     os.makedirs("submission_results", exist_ok=True)
