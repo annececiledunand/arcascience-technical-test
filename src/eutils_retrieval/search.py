@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import httpx
 from loguru import logger
 
@@ -46,12 +48,16 @@ def pmc_search_and_store(query: str) -> PMCStorageInfos | None:
         "retmode": "json",
     }
 
-    logger.debug(f"Search and store params:\n{search_params}")
-
     url = f"{PMC_DATABASE_URL}{URL_SEARCH_TAIL}"
-
     search_response = httpx.get(url, params=search_params)
-    if search_response.status_code != 200:
+
+    if search_response.status_code == HTTPStatus.REQUEST_URI_TOO_LONG:
+        logger.error(
+            f"Error while searching and storing PMC db: {HTTPStatus.REQUEST_URI_TOO_LONG} ({len(str(search_response.request.url))} chars in URL)"
+        )
+        return None
+
+    if search_response.status_code != HTTPStatus.OK:
         logger.error(
             f"Error searching PMC: ({search_response.status_code}){search_response.reason_phrase}"
         )
@@ -130,7 +136,7 @@ def fetch_stored_articles_by_batch(
     }
 
     summary_response = httpx.get(f"{PMC_DATABASE_URL}{URL_SUMMARY_TAIL}", params=summary_params)
-    if summary_response.status_code != 200:
+    if summary_response.status_code != HTTPStatus.OK:
         logger.error(f"Error retrieving PMC results: {summary_response.status_code}")
         return None
 
