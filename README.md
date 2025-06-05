@@ -9,6 +9,11 @@ See [test instruction](./INSTRUCTIONS.md)
    uv sync --locked
    ```
 
+2. Run main script
+
+   ```sh
+   uv run main.py --help # to see the options
+   ```
 
 ## Dev
 
