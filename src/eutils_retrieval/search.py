@@ -2,7 +2,7 @@ import requests
 from loguru import logger
 
 
-def search_pmc(query: str) -> list[dict]:
+def search_pmc(query):
     """
     Search PMC database for articles matching the given query.
 
@@ -96,9 +96,7 @@ def search_pmc(query: str) -> list[dict]:
         return []
 
 
-def search_pubmed_pmc(
-    query: str, start_year: int | None = None, end_year: int | None = None
-) -> list[dict]:
+def search_pubmed_pmc(query, start_year=None, end_year=None):
     """
     Search for articles matching the query and optional date range.
 
