@@ -8,6 +8,8 @@ PMC_DATABASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
 URL_SEARCH_TAIL = "esearch.fcgi"
 URL_SUMMARY_TAIL = "esummary.fcgi"
 
+MAX_ALLOWED_SUMMARY_RETRIEVAL = 500
+
 
 class PMCStorageInfos(TypedDict):
     """Minimal PMC search result needed to fetch stored articles"""
@@ -71,33 +73,66 @@ def pmc_search_and_store(query: str) -> PMCStorageInfos | None:
     )
 
 
-def fetch_all_stored_articles(storage_infos: PMCStorageInfos) -> dict | None:
+def fetch_all_stored_articles(
+    storage_infos: PMCStorageInfos, max_allowed_elements: int = MAX_ALLOWED_SUMMARY_RETRIEVAL
+) -> dict | None:
     """Fetch all stored articles data requested in previous db query
 
     Args:
         storage_infos (PMCStorageInfos): Minimal infos needed to retrieve previously queried articles
+        max_allowed_elements (int): Max number of elements allowed by the api endpoint to fetch data
 
     Returns:
-        dict of all articles data, by uid
+        dict of all articles data, by uid + one key 'uids' that contains all uids used as key
     """
 
-    # Inefficient retrieval approach - doesn't use batching properly
-    # This will work for small result sets but fail/be slow for large ones
+    all_articles: dict = {}
+
+    total_elements = storage_infos["total_results"]
+    limit = total_elements if total_elements < max_allowed_elements else max_allowed_elements
+
+    # Creates batches of fixed size `limit`, in order to reach `total_elements` by generating a couple
+    # (offset, limit=MAX_ALLOWED_SUMMARY_RETRIEVAL) to the request
+    for offset in range(0, total_elements, limit):
+        if stored_summaries := fetch_stored_articles_by_batch(
+            storage_infos, offset=offset, limit=limit
+        ):
+            all_articles = {
+                **all_articles,
+                **stored_summaries,
+                "uids": [*all_articles.get("uids", []), *stored_summaries.get("uids", [])],
+            }
+
+    return all_articles
+
+
+def fetch_stored_articles_by_batch(
+    storage_infos: PMCStorageInfos, offset: int = 0, limit: int = MAX_ALLOWED_SUMMARY_RETRIEVAL
+) -> dict | None:
+    """Fetch stored articles data requested in previous db query, starting from a specific offset to a given limit.
+
+    Args:
+        storage_infos (PMCStorageInfos): Minimal infos needed to retrieve previously queried articles
+        offset (int): offset to start fetching the stored article infos
+        limit (int): max number of article infos to fetch in one request.
+
+    Returns:
+        dict of all articles data, by uid + one key 'uids' that contains all uids used as key
+    """
+
     summary_params = {
         "db": "pmc",
         "query_key": storage_infos["query_key"],
         "WebEnv": storage_infos["web_env"],
-        "retstart": 0,
-        "retmax": storage_infos[
-            "total_results"
-        ],  # Tries to get all results at once - will often fail
+        "retstart": offset,
+        "retmax": limit,
         "retmode": "json",
     }
 
     summary_response = httpx.get(f"{PMC_DATABASE_URL}{URL_SUMMARY_TAIL}", params=summary_params)
     if summary_response.status_code != 200:
         logger.error(f"Error retrieving PMC results: {summary_response.status_code}")
-        return []
+        return None
 
     summary_data = summary_response.json()
     if "result" not in summary_data:
