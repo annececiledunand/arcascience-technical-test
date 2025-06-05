@@ -1,4 +1,4 @@
-from src.eutils_retrieval.query import create_query
+from src.eutils_retrieval.query import create_one_combination_query
 
 TEST_DEVICES = [
     "Hemoblast",
@@ -15,5 +15,5 @@ def test_create_query():
         " AND "
         '("Urology Indicators" OR "urological surgery" OR "vascular surgery")'
     )
-    result = create_query(TEST_DEVICES, TEST_INDICATORS)
+    result = create_one_combination_query(TEST_DEVICES, TEST_INDICATORS)
     assert result == expected_query

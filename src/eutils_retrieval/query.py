@@ -1,4 +1,4 @@
-def create_query(devices: list[str], indicators: list[str]) -> str:
+def create_one_combination_query(devices: list[str], indicators: list[str]) -> str:
     """
     Create a search query combining hemostatic devices and urology indicators.
 
