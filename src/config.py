@@ -1,14 +1,4 @@
-def flatten_dict_to_list(d):
-    """
-    Flatten a dictionary into a list of its keys and values.
-
-    Args:
-        d (dict): The dictionary to flatten.
-
-    Returns:
-        list: A flattened list containing keys and values.
-    """
-    return [item for key, values in d.items() for item in [key] + values]
+from src.utils import flatten_dict_to_list
 
 HEMOSTATIC_DEVICES = {
     "Hemoblast": ["Biom'up"],
@@ -44,13 +34,9 @@ HEMOSTATIC_DEVICES = {
 HEMOSTATIC_DEVICES_FLAT = flatten_dict_to_list(HEMOSTATIC_DEVICES)
 
 
-HEMOSTATIC_DEVICES_MINI = {
-    k: v
-    for k, v in list(HEMOSTATIC_DEVICES.items())[:10]
-}
+HEMOSTATIC_DEVICES_MINI = {k: v for k, v in list(HEMOSTATIC_DEVICES.items())[:10]}
 
 HEMOSTATIC_DEVICES_MINI_FLAT = flatten_dict_to_list(HEMOSTATIC_DEVICES_MINI)
-
 
 
 UROLOGY_INDICATORS = {
@@ -202,11 +188,5 @@ UROLOGY_INDICATORS = {
 
 UROLOGY_INDICATORS_FLAT = flatten_dict_to_list(UROLOGY_INDICATORS)
 
-UROLOGY_INDICATORS_MINI = {
-    k: v[:10]
-    for k, v in UROLOGY_INDICATORS.items()
-}
+UROLOGY_INDICATORS_MINI = {k: v[:10] for k, v in UROLOGY_INDICATORS.items()}
 UROLOGY_INDICATORS_MINI_FLAT = flatten_dict_to_list(UROLOGY_INDICATORS_MINI)
-
-
-
