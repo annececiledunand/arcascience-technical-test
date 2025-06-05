@@ -6,7 +6,7 @@ import time
 from loguru import logger
 
 
-def create_query(devices, indicators):
+def create_query(devices: list[str], indicators: list[str]) -> str:
     """
     Create a search query combining hemostatic devices and urology indicators.
 
@@ -17,8 +17,9 @@ def create_query(devices, indicators):
     Returns:
         str: Combined search query
     """
-    device_query = " OR ".join([f'"{device}"' for device in devices])
-    indicator_query = " OR ".join([f'"{indicator}"' for indicator in indicators])
+    # note: join can directly use generators
+    device_query = " OR ".join(f'"{device}"' for device in devices)
+    indicator_query = " OR ".join(f'"{indicator}"' for indicator in indicators)
 
     # Combine with AND to find articles mentioning both
     return f"({device_query}) AND ({indicator_query})"
