@@ -2,7 +2,6 @@ name: Linter and Tests
 
 
 on:
-  push:
   pull_request:
     branches: main
 
@@ -29,4 +28,7 @@ jobs:
         run: uv sync --locked
 
       - name: Run tests
-        run: uv run pytest
+        run: uv run coverage run --branch -m pytest
+
+      - name: Check coverage
+        run: uv run coverage report --include "src/*" --skip-covered --skip-empty --show-missing --fail-under=70
