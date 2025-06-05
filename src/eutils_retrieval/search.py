@@ -1,5 +1,4 @@
 import httpx
-import requests
 from loguru import logger
 
 from typing import TypedDict, NotRequired
@@ -11,7 +10,7 @@ URL_SUMMARY_TAIL = "esummary.fcgi"
 
 
 class PMCStorageInfos(TypedDict):
-    """Explicits the return type of search and store method to always expect the correct arguments and types"""
+    """Minimal PMC search result needed to fetch stored articles"""
 
     total_results: int
     web_env: NotRequired[str]
@@ -118,7 +117,6 @@ def search_pmc(query: str) -> list[ArticleIds]:
     Returns:
         list: List of dictionaries containing 'pmcid' and 'pmid' (when available)
     """
-    session = requests.Session()
 
     try:
         # Search for IDs matching the query
@@ -126,57 +124,11 @@ def search_pmc(query: str) -> list[ArticleIds]:
         if storage_infos is None or storage_infos["total_results"] == 0:
             return []
 
-        # Inefficient retrieval approach - doesn't use batching properly
-        # This will work for small result sets but fail/be slow for large ones
-        summary_params = {
-            "db": "pmc",
-            "query_key": storage_infos["query_key"],
-            "WebEnv": storage_infos["web_env"],
-            "retstart": 0,
-            "retmax": storage_infos[
-                "total_results"
-            ],  # Tries to get all results at once - will often fail
-            "retmode": "json",
-        }
+        result_set = fetch_all_stored_articles(storage_infos)
 
-        summary_response = session.get(
-            f"{PMC_DATABASE_URL}{URL_SUMMARY_TAIL}", params=summary_params
-        )
-        if summary_response.status_code != 200:
-            logger.error(f"Error retrieving PMC results: {summary_response.status_code}")
+        if not result_set:
             return []
-
-        summary_data = summary_response.json()
-        if "result" not in summary_data:
-            logger.error("Unexpected response format")
-            return []
-
-        result_set = summary_data["result"]
-        uids = result_set.get("uids", [])
-
-        results = []
-        for uid in uids:
-            if uid not in result_set:
-                continue
-            article_data = result_set[uid]
-
-            # Extract PMID if available
-            pmid = None
-            if "articleids" not in article_data:
-                continue
-            for article_id in article_data["articleids"]:
-                if article_id["idtype"] == "pmid" and article_id["value"] != "0":
-                    pmid = article_id["value"]
-
-            # Format PMCID
-            formatted_pmcid = uid
-            if not str(formatted_pmcid).startswith("PMC"):
-                formatted_pmcid = f"PMC{uid}"
-
-            article_result = {"pmcid": formatted_pmcid, "pmid": pmid}
-            results.append(article_result)
-
-        return results
+        return extract_all_article_ids(result_set)
 
     # TODO catch exception less broadly
     except Exception:
