@@ -72,7 +72,44 @@ def pmc_search_and_store(query: str) -> PMCStorageInfos | None:
     )
 
 
-def search_pmc(query: str) -> list[dict]:
+def fetch_all_stored_articles(storage_infos: PMCStorageInfos) -> dict | None:
+    """Fetch all stored articles data requested in previous db query
+
+    Args:
+        storage_infos (PMCStorageInfos): Minimal infos needed to retrieve previously queried articles
+
+    Returns:
+        dict of all articles data, by uid
+    """
+
+    # Inefficient retrieval approach - doesn't use batching properly
+    # This will work for small result sets but fail/be slow for large ones
+    summary_params = {
+        "db": "pmc",
+        "query_key": storage_infos["query_key"],
+        "WebEnv": storage_infos["web_env"],
+        "retstart": 0,
+        "retmax": storage_infos[
+            "total_results"
+        ],  # Tries to get all results at once - will often fail
+        "retmode": "json",
+    }
+
+    session = requests.Session()
+    summary_response = session.get(f"{PMC_DATABASE_URL}{URL_SUMMARY_TAIL}", params=summary_params)
+    if summary_response.status_code != 200:
+        logger.error(f"Error retrieving PMC results: {summary_response.status_code}")
+        return []
+
+    summary_data = summary_response.json()
+    if "result" not in summary_data:
+        logger.error(f"Unexpected response format\n{summary_response.text}")
+        return None
+
+    return summary_data.get("result")
+
+
+def search_pmc(query: str) -> list[ArticleIds]:
     """
     Search PMC database for articles matching the given query.
 
