@@ -1,4 +1,5 @@
 import requests
+from loguru import logger
 
 
 def search_pmc(query):
@@ -25,20 +26,20 @@ def search_pmc(query):
     try:
         search_response = session.get(f"{base_url}esearch.fcgi", params=search_params)
         if search_response.status_code != 200:
-            print(f"Error searching PMC: {search_response.status_code}")
+            logger.error(f"Error searching PMC: {search_response.status_code}")
             return []
 
         search_data = search_response.json()
         total_results = int(search_data["esearchresult"]["count"])
 
         if total_results == 0:
-            print("No results found in PMC.")
+            logger.info("No results found in PMC.")
             return []
 
         web_env = search_data["esearchresult"]["webenv"]
         query_key = search_data["esearchresult"]["querykey"]
 
-        print(f"Found {total_results} results in PMC.")
+        logger.success(f"Found {total_results} results in PMC.")
 
         # Inefficient retrieval approach - doesn't use batching properly
         # This will work for small result sets but fail/be slow for large ones
@@ -53,12 +54,12 @@ def search_pmc(query):
 
         summary_response = session.get(f"{base_url}esummary.fcgi", params=summary_params)
         if summary_response.status_code != 200:
-            print(f"Error retrieving PMC results: {summary_response.status_code}")
+            logger.error(f"Error retrieving PMC results: {summary_response.status_code}")
             return []
 
         summary_data = summary_response.json()
         if "result" not in summary_data:
-            print("Unexpected response format")
+            logger.error("Unexpected response format")
             return []
 
         result_set = summary_data["result"]
@@ -88,8 +89,10 @@ def search_pmc(query):
 
         return results
 
-    except Exception as e:
-        print(f"Error processing PMC search: {e}")
+    # TODO catch exception less broadly
+    except Exception:
+        # logger.exception in loguru is a ERROR level message and capture exception in message
+        logger.exception("Error processing PMC search")
         return []
 
 

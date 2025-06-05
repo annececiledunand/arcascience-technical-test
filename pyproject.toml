@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Technical test for data engineer at ArcaScience"
 readme = "README.md"
 dependencies = [
+    "loguru>=0.7.3",
     "pre-commit>=4.2.0",
     "pytest>=8.4.0",
     "requests>=2.32.3",
