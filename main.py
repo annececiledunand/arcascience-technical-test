@@ -1,14 +1,28 @@
-from pathlib import Path
-
 from src.config import HEMOSTATIC_DEVICES_MINI_FLAT, UROLOGY_INDICATORS_MINI_FLAT
-from src.eutils_retrieval.query import create_query
 from src.eutils_retrieval.search import search_pubmed_pmc
 import json
+import os
 import time
 from loguru import logger
 
 
-SUBMISSION_RESULTS_FOLDER = Path(__file__).parent / "submission_results"
+def create_query(devices: list[str], indicators: list[str]) -> str:
+    """
+    Create a search query combining hemostatic devices and urology indicators.
+
+    Args:
+        devices (list): List of hemostatic devices and related terms
+        indicators (list): List of urology indicators and related terms
+
+    Returns:
+        str: Combined search query
+    """
+    # note: join can directly use generators
+    device_query = " OR ".join(f'"{device}"' for device in devices)
+    indicator_query = " OR ".join(f'"{indicator}"' for indicator in indicators)
+
+    # Combine with AND to find articles mentioning both
+    return f"({device_query}) AND ({indicator_query})"
 
 
 def main():
@@ -24,9 +38,9 @@ def main():
     logger.success(f"Found {len(results)} results, took {time.time() - start} seconds")
 
     # Save the results to a JSON file
-    SUBMISSION_RESULTS_FOLDER.mkdir(exist_ok=True)
-    with (SUBMISSION_RESULTS_FOLDER / "retrieved_ids.json").open("w") as json_writer:
-        json.dump(results, json_writer, indent=4)
+    os.makedirs("submission_results", exist_ok=True)
+    with open(os.path.join("submission_results", "retrieved_ids.json"), "w") as f:
+        json.dump(results, f, indent=4)
 
 
 if __name__ == "__main__":
