@@ -3,6 +3,7 @@ from http import HTTPStatus
 
 import httpx
 import pytest
+from httpx import URL
 from pytest_httpx import HTTPXMock
 
 from src.eutils_retrieval.search import (
@@ -12,6 +13,9 @@ from src.eutils_retrieval.search import (
     extract_one_article_ids,
     ArticleIds,
     extract_all_article_ids,
+    PMCStorageInfos,
+    fetch_all_stored_articles,
+    URL_SUMMARY_TAIL,
 )
 
 
@@ -91,3 +95,47 @@ def test_extract_all_article_ids():
 
     result = extract_all_article_ids(articles)
     assert result == expected
+
+
+def test_fetch_all_stored_articles(httpx_mock: HTTPXMock):
+    httpx_mock.add_response(
+        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        method="GET",
+        json={"result": "bonjour"},
+    )
+
+    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+
+    with httpx.Client():
+        result = fetch_all_stored_articles(storage_infos)
+        assert result == "bonjour"
+        assert httpx_mock.get_request().url == URL(
+            "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&query_key=query_key&WebEnv=web_env&retstart=0&retmax=10&retmode=json"
+        )
+
+
+def test_fetch_all_stored_articles_no_result(httpx_mock: HTTPXMock):
+    httpx_mock.add_response(
+        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        method="GET",
+        json="bonjour",
+    )
+
+    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+
+    with httpx.Client():
+        result = fetch_all_stored_articles(storage_infos)
+        assert result is None
+
+
+def test_fetch_all_stored_articles_error(httpx_mock: HTTPXMock):
+    httpx_mock.add_response(
+        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        method="GET",
+        status_code=HTTPStatus.IM_A_TEAPOT,
+    )
+
+    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+    with httpx.Client():
+        result = fetch_all_stored_articles(storage_infos)
+        assert result == []

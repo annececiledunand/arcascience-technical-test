@@ -95,8 +95,7 @@ def fetch_all_stored_articles(storage_infos: PMCStorageInfos) -> dict | None:
         "retmode": "json",
     }
 
-    session = requests.Session()
-    summary_response = session.get(f"{PMC_DATABASE_URL}{URL_SUMMARY_TAIL}", params=summary_params)
+    summary_response = httpx.get(f"{PMC_DATABASE_URL}{URL_SUMMARY_TAIL}", params=summary_params)
     if summary_response.status_code != 200:
         logger.error(f"Error retrieving PMC results: {summary_response.status_code}")
         return []
