@@ -1,4 +1,4 @@
-from utils import flatten_dict_to_list
+from src.utils import flatten_dict_to_list
 
 HEMOSTATIC_DEVICES = {
     "Hemoblast": ["Biom'up"],
