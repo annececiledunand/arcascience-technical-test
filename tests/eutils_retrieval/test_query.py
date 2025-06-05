@@ -9,7 +9,7 @@ TEST_DEVICES = [
 TEST_INDICATORS = ["Urology Indicators", "urological surgery", "vascular surgery"]
 
 
-def test_create_query():
+def test_create_one_combination_query():
     expected_query = (
         '("Hemoblast" OR "Biom\'up" OR "Gelfoam" OR "Gelatin sponge")'
         " AND "
