@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from src.config import HEMOSTATIC_DEVICES_MINI_FLAT, UROLOGY_INDICATORS_MINI_FLAT
-from src.eutils_retrieval.query import create_query
+from src.eutils_retrieval.query import create_one_combination_query
 from src.eutils_retrieval.search import search_pubmed_pmc
 import json
 import time
@@ -17,7 +17,7 @@ def main():
     # Note: This is using the mini (reduced) datasets for testing
     #  For the final solution, you should use the full datasets:
     #  HEMOSTATIC_DEVICES_FLAT and UROLOGY_INDICATORS_FLAT
-    query = create_query(HEMOSTATIC_DEVICES_MINI_FLAT, UROLOGY_INDICATORS_MINI_FLAT)
+    query = create_one_combination_query(HEMOSTATIC_DEVICES_MINI_FLAT, UROLOGY_INDICATORS_MINI_FLAT)
 
     # search for articles in the specified date range (only 2023 for now)
     results = search_pubmed_pmc(query, start_year=2023, end_year=2023)
