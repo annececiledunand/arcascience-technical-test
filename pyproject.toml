@@ -1,2 +1,16 @@
+[project]
+name = "arcascience-technical-test"
+version = "0.1.0"
+description = "Technical test for data engineer at ArcaScience"
+readme = "README.md"
+dependencies = [
+    "pre-commit>=4.2.0",
+    "pytest>=8.4.0",
+    "requests>=2.32.3",
+    "ruff>=0.11.12",
+    "tqdm>=4.67.1",
+]
+
 [tool.ruff]
+lint.select = ["E4", "E7", "E9", "F"] # Very small rules to start with
 line-length = 100
