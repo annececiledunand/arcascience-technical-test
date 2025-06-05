@@ -16,6 +16,7 @@ from src.eutils_retrieval.search import (
     PMCStorageInfos,
     fetch_all_stored_articles,
     URL_SUMMARY_TAIL,
+    fetch_stored_articles_by_batch,
 )
 
 
@@ -101,17 +102,53 @@ def test_fetch_all_stored_articles(httpx_mock: HTTPXMock):
     httpx_mock.add_response(
         url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
         method="GET",
-        json={"result": "bonjour"},
+        json={"result": {"uids": ["bonjour"], "bonjour": 2}},
     )
 
     storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
 
     with httpx.Client():
         result = fetch_all_stored_articles(storage_infos)
-        assert result == "bonjour"
+        assert result == {"uids": ["bonjour"], "bonjour": 2}
         assert httpx_mock.get_request().url == URL(
             "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&query_key=query_key&WebEnv=web_env&retstart=0&retmax=10&retmode=json"
         )
+
+
+def test_fetch_stored_articles_by_batch(httpx_mock: HTTPXMock):
+    httpx_mock.add_response(
+        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        method="GET",
+        json={"result": {"uids": ["bonjour"], "bonjour": 2}},
+    )
+
+    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+
+    with httpx.Client():
+        result = fetch_stored_articles_by_batch(storage_infos, offset=7, limit=11)
+        assert result == {"uids": ["bonjour"], "bonjour": 2}
+        assert httpx_mock.get_request().url == URL(
+            "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&query_key=query_key&WebEnv=web_env&retstart=7&retmax=11&retmode=json"
+        )
+
+
+def test_fetch_all_stored_articles_with_batch(httpx_mock: HTTPXMock):
+    httpx_mock.add_response(
+        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        method="GET",
+        json={"result": {"uids": ["bonjour"], "bonjour": 1}},
+    )
+    httpx_mock.add_response(
+        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        method="GET",
+        json={"result": {"uids": ["hello"], "hello": 2}},
+    )
+
+    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=2)
+
+    result = fetch_all_stored_articles(storage_infos, max_allowed_elements=1)
+    # check that the batching method is called two times
+    assert result == {"uids": ["bonjour", "hello"], "bonjour": 1, "hello": 2}
 
 
 def test_fetch_all_stored_articles_no_result(httpx_mock: HTTPXMock):
@@ -125,7 +162,7 @@ def test_fetch_all_stored_articles_no_result(httpx_mock: HTTPXMock):
 
     with httpx.Client():
         result = fetch_all_stored_articles(storage_infos)
-        assert result is None
+        assert result == {}
 
 
 def test_fetch_all_stored_articles_error(httpx_mock: HTTPXMock):
@@ -138,4 +175,4 @@ def test_fetch_all_stored_articles_error(httpx_mock: HTTPXMock):
     storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
     with httpx.Client():
         result = fetch_all_stored_articles(storage_infos)
-        assert result == []
+        assert result == {}
