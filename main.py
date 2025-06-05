@@ -1,10 +1,14 @@
+from pathlib import Path
+
 from src.config import HEMOSTATIC_DEVICES_MINI_FLAT, UROLOGY_INDICATORS_MINI_FLAT
 from src.eutils_retrieval.query import create_query
 from src.eutils_retrieval.search import search_pubmed_pmc
 import json
-import os
 import time
 from loguru import logger
+
+
+SUBMISSION_RESULTS_FOLDER = Path(__file__).parent / "submission_results"
 
 
 def main():
@@ -20,9 +24,9 @@ def main():
     logger.success(f"Found {len(results)} results, took {time.time() - start} seconds")
 
     # Save the results to a JSON file
-    os.makedirs("submission_results", exist_ok=True)
-    with open(os.path.join("submission_results", "retrieved_ids.json"), "w") as f:
-        json.dump(results, f, indent=4)
+    SUBMISSION_RESULTS_FOLDER.mkdir(exist_ok=True)
+    with (SUBMISSION_RESULTS_FOLDER / "retrieved_ids.json").open("w") as json_writer:
+        json.dump(results, json_writer, indent=4)
 
 
 if __name__ == "__main__":
