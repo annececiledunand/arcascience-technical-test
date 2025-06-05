@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 import httpx
+from httpx_retries import RetryTransport, Retry
 from loguru import logger
 
 from typing import TypedDict, NotRequired
@@ -28,6 +29,9 @@ class ArticleIds(TypedDict):
     pmid: str | None
 
 
+TRANSPORT_SEARCH_ENDPOINT = RetryTransport(retry=Retry(total=2, backoff_factor=0.5))
+
+
 def pmc_search_and_store(query: str) -> PMCStorageInfos | None:
     """
     Search PMC database and ask to store them for later retrieval, for articles matching the given query.
@@ -49,7 +53,9 @@ def pmc_search_and_store(query: str) -> PMCStorageInfos | None:
     }
 
     url = f"{PMC_DATABASE_URL}{URL_SEARCH_TAIL}"
-    search_response = httpx.get(url, params=search_params)
+
+    with httpx.Client(transport=TRANSPORT_SEARCH_ENDPOINT) as client:
+        search_response = client.get(url, params=search_params)
 
     if search_response.status_code == HTTPStatus.REQUEST_URI_TOO_LONG:
         logger.error(
@@ -112,6 +118,9 @@ def fetch_all_stored_articles(
     return all_articles
 
 
+TRANSPORT_SUMMARY_ENDPOINT = RetryTransport(retry=Retry(total=3, backoff_factor=0.5))
+
+
 def fetch_stored_articles_by_batch(
     storage_infos: PMCStorageInfos, offset: int = 0, limit: int = MAX_ALLOWED_SUMMARY_RETRIEVAL
 ) -> dict | None:
@@ -135,7 +144,11 @@ def fetch_stored_articles_by_batch(
         "retmode": "json",
     }
 
-    summary_response = httpx.get(f"{PMC_DATABASE_URL}{URL_SUMMARY_TAIL}", params=summary_params)
+    with httpx.Client(transport=TRANSPORT_SUMMARY_ENDPOINT) as client:
+        summary_response = client.get(
+            f"{PMC_DATABASE_URL}{URL_SUMMARY_TAIL}", params=summary_params
+        )
+
     if summary_response.status_code != HTTPStatus.OK:
         logger.error(f"Error retrieving PMC results: {summary_response.status_code}")
         return None
