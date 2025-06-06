@@ -1,15 +1,15 @@
+from typing import NotRequired, TypedDict
+
 from loguru import logger
 
-from typing import TypedDict, NotRequired
-
-from src.eutils_retrieval.api import call_eutils, NCBIEndpoint, NCBIDatabase
+from src.eutils_retrieval.api import NCBIDatabase, NCBIEndpoint, call_eutils
 
 # Given by API endpoint when trying to retrieve more than 500 elements at once
 MAX_ALLOWED_SUMMARY_RETRIEVAL = 500
 
 
 class StorageInfos(TypedDict):
-    """Minimal PMC search result needed to fetch stored articles"""
+    """Minimal PMC search result needed to fetch stored articles."""
 
     db: NCBIDatabase
     total_results: int
@@ -18,15 +18,20 @@ class StorageInfos(TypedDict):
 
 
 class ArticleIds(TypedDict):
-    """Article ids from both PMC and PubMed databases"""
+    """Article ids from both PMC and PubMed databases.
+
+    Attributes:
+        pmcid (str | None): id for PCM database
+        pmid (str | None): id for PubMed database
+
+    """
 
     pmcid: str | None
     pmid: str | None
 
 
 def search_and_store(query: str, db: NCBIDatabase) -> StorageInfos | None:
-    """
-    Search PMC database and ask to store them for later retrieval, for articles matching the given query.
+    """Search `db` for articles based on query and ask to store them for later retrieval.
 
     Args:
         query (str): Search query string
@@ -36,7 +41,9 @@ def search_and_store(query: str, db: NCBIDatabase) -> StorageInfos | None:
         StorageInfos: Information to retrieve requested data in storage
 
     Notes:
-        See https://www.ncbi.nlm.nih.gov/books/NBK25500/#chapter1.Searching_a_Database -> Storing Search Results
+        See https://www.ncbi.nlm.nih.gov/books/NBK25500/#chapter1.Searching_a_Database
+        -> Storing Search Results
+
     """
     search_params = {
         "db": db.value,
@@ -64,9 +71,10 @@ def search_and_store(query: str, db: NCBIDatabase) -> StorageInfos | None:
 
 
 def fetch_all_stored_articles(
-    storage_infos: StorageInfos, max_allowed_elements: int = MAX_ALLOWED_SUMMARY_RETRIEVAL
+    storage_infos: StorageInfos,
+    max_allowed_elements: int = MAX_ALLOWED_SUMMARY_RETRIEVAL,
 ) -> dict | None:
-    """Fetch all stored articles data requested in previous db query
+    """Fetch all stored articles data requested in previous db query.
 
     Args:
         storage_infos (StorageInfos): Minimal infos needed to retrieve previously queried articles
@@ -74,21 +82,24 @@ def fetch_all_stored_articles(
 
     Returns:
         dict of all articles data, by uid + one key 'uids' that contains all uids used as key
-    """
 
+    """
     all_articles: dict = {}
 
     total_elements = storage_infos["total_results"]
-    limit = total_elements if total_elements < max_allowed_elements else max_allowed_elements
+    limit = min(max_allowed_elements, total_elements)
 
-    # Creates batches of fixed size `limit`, in order to reach `total_elements` by generating a couple
-    # (offset, limit=MAX_ALLOWED_SUMMARY_RETRIEVAL) to the request
+    # Creates batches of fixed size `limit`, in order to reach `total_elements` by generating a
+    # couple (offset, limit=MAX_ALLOWED_SUMMARY_RETRIEVAL) to the request
     for offset in range(0, total_elements, limit):
         logger.debug(
-            f"Calling {storage_infos['db'].value} database for summary fetching (from {offset} to {limit + offset}/{total_elements})."
+            f"Calling {storage_infos['db'].value} database for summary fetching "
+            f"(from {offset} to {limit + offset}/{total_elements}).",
         )
         if stored_summaries := fetch_stored_articles_by_batch(
-            storage_infos, offset=offset, limit=limit
+            storage_infos,
+            offset=offset,
+            limit=limit,
         ):
             all_articles = {
                 **all_articles,
@@ -100,9 +111,11 @@ def fetch_all_stored_articles(
 
 
 def fetch_stored_articles_by_batch(
-    storage_infos: StorageInfos, offset: int = 0, limit: int = MAX_ALLOWED_SUMMARY_RETRIEVAL
+    storage_infos: StorageInfos,
+    offset: int = 0,
+    limit: int = MAX_ALLOWED_SUMMARY_RETRIEVAL,
 ) -> dict | None:
-    """Fetch stored articles data requested in previous db query, starting from a specific offset to a given limit.
+    """Fetch stored articles data requested in previous db query, allowing for pagination.
 
     Args:
         storage_infos (StorageInfos): Minimal infos needed to retrieve previously queried articles
@@ -111,8 +124,8 @@ def fetch_stored_articles_by_batch(
 
     Returns:
         dict of all articles data, by uid + one key 'uids' that contains all uids used as key
-    """
 
+    """
     summary_params = {
         "db": storage_infos["db"].value,
         "query_key": storage_infos["query_key"],
@@ -131,21 +144,23 @@ def fetch_stored_articles_by_batch(
 
 
 def extract_all_article_ids(articles: dict, db: NCBIDatabase) -> list[ArticleIds]:
-    """Extract and format PubMed and PMC ids for a given article
+    """Extract and format PubMed and PMC ids for a given article.
 
     Args:
         db (NCBIDatabase): Database giving its ids. Format and naming differs from db to db.
-        articles (dict): all articles data in database. Has one key `uids` with list of uids (str) as value, other keys are `uid` with {article_data_dict} as value
+        articles (dict): all articles data in database. Has one key `uids` with
+            list of uids (str) as value, other keys are `uid` with {article_data_dict} as value
 
     Returns:
         list of ArticleIds
+
     """
     uids = articles.pop("uids")  # uids key with list of all uids as key:value in dict
     if set(uids) != set(articles.keys()):
         logger.warning(  # pragma: no cover
             f"Difference between results and uids list given\n"
             f"Uids given in list: {len(set(uids))}\n"
-            f"Uids as keys for result: {len(set(articles.keys()))}"
+            f"Uids as keys for result: {len(set(articles.keys()))}",
         )
 
     extract_article_ids_method = {
@@ -153,16 +168,12 @@ def extract_all_article_ids(articles: dict, db: NCBIDatabase) -> list[ArticleIds
         NCBIDatabase.PMC: extract_ids_from_pcm_article,
     }[db]
 
-    results = []
-    for uid, article_data in articles.items():
-        if article_result := extract_article_ids_method(article_data):
-            results.append(article_result)
-
-    return results
+    results = [extract_article_ids_method(article_data) for article_data in articles.values()]
+    return list(filter(None, results))
 
 
 def extract_ids_from_pcm_article(article_data: dict) -> ArticleIds:
-    """Extract and format PubMed and PMC ids for a given article in PCM database
+    """Extract and format PubMed and PMC ids for a given article in PCM database.
 
     Args:
         article_data (dict): all data in PMC database related to the article
@@ -178,8 +189,8 @@ def extract_ids_from_pcm_article(article_data: dict) -> ArticleIds:
             {'idtype': 'pmcid', 'value': 'PMC9848274'}
         ]
         ...}
-    """
 
+    """
     # Extract PMID if available
     pmid, pmcid = None, None
     if "articleids" not in article_data:
@@ -200,7 +211,7 @@ def extract_ids_from_pcm_article(article_data: dict) -> ArticleIds:
 
 
 def extract_ids_from_pub_med_article(article_data: dict) -> ArticleIds:
-    """Extract and format PubMed and PMC ids for a given article in PCM database
+    """Extract and format PubMed and PMC ids for a given article in PCM database.
 
     Args:
         article_data (dict): all data in PMC database related to the article
@@ -217,8 +228,8 @@ def extract_ids_from_pub_med_article(article_data: dict) -> ArticleIds:
             {'idtype': 'pmcid', 'idtypen': 5, 'value': 'pmc-id: PMC10189980;'}
         ]
         ...}
-    """
 
+    """
     # Extract PMID if available
     pmid, pmcid = None, None
     if "articleids" not in article_data:

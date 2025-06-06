@@ -105,7 +105,15 @@ def search_and_store_response() -> dict:
                 "RANGE",
                 "AND",
             ],
-            "querytranslation": '(("Hemoblast"[All Fields] OR "Biom\'up"[All Fields]) AND ("urological surgery"[All Fields] OR "vascular surgery"[All Fields] OR "renal transplant"[All Fields] OR "kidney transplant"[All Fields] OR "prostatectomy"[All Fields] OR "nephrectomy"[All Fields] OR "nephrolithotomy"[All Fields] OR "pyeloplasty"[All Fields] OR "ureterectomy"[All Fields] OR "cystectomy"[All Fields])) AND 2023[PubDate] : 2023[PubDate]',
+            "querytranslation": (
+                '(("Hemoblast"[All Fields] OR "Biom\'up"[All Fields]) AND'
+                ' ("urological surgery"[All Fields] OR "vascular surgery"[All Fields] '
+                'OR "renal transplant"[All Fields] OR "kidney transplant"[All Fields] '
+                'OR "prostatectomy"[All Fields] OR "nephrectomy"[All Fields] OR '
+                '"nephrolithotomy"[All Fields] OR "pyeloplasty"[All Fields] OR '
+                '"ureterectomy"[All Fields] OR "cystectomy"[All Fields])) '
+                "AND 2023[PubDate] : 2023[PubDate]"
+            ),
         },
     }
 
@@ -150,6 +158,8 @@ def search_and_store_response_none() -> dict:
                 "RANGE",
                 "AND",
             ],
-            "querytranslation": '(("Hemoblast"[All Fields] OR "Biom\'up"[All Fields]) AND "urological surgery"[All Fields]) AND 2023[PubDate] : 2023[PubDate]',
+            "querytranslation": '(("Hemoblast"[All Fields] OR "Biom\'up"[All Fields]) AND '
+            '"urological surgery"[All Fields]) '
+            "AND 2023[PubDate] : 2023[PubDate]",
         },
     }

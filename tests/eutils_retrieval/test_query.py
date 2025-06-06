@@ -1,11 +1,11 @@
 import pytest
 
 from src.eutils_retrieval.query import (
-    create_one_combination_query,
-    create_complete_combinations_queries,
     biggest_nb_words_possible,
-    create_year_bound_query,
+    create_complete_combinations_queries,
     create_e_queries,
+    create_one_combination_query,
+    create_year_bound_query,
 )
 
 TEST_DEVICES = [
@@ -38,13 +38,13 @@ def test_create_e_queries_no_bound():
 
 
 @pytest.mark.parametrize(
-    "bounds, expected",
-    (
+    ("bounds", "expected"),
+    [
         ((None, None), ""),
         ((2023, None), "2023[PDAT]"),
         ((None, 2023), "2023[PDAT]"),
         ((2023, 2024), "2023[PDAT]:2024[PDAT]"),
-    ),
+    ],
 )
 def test_create_year_bound_query(bounds: tuple[int | None, int | None], expected: str):
     result = create_year_bound_query(*bounds)
@@ -79,7 +79,8 @@ def test_biggest_nb_words_possible_smaller():
 def test_create_complete_combinations_queries_impossible():
     with pytest.raises(
         Exception,
-        match="Cannot build query since the maximum length allowed \(2\) is not sufficient to combine one by one the biggest words in either devices or indicators",
+        match=r"Cannot build query since the maximum length allowed \(2\) is not sufficient to "
+        r"combine one by one the biggest words in either devices or indicators",
     ):
         create_complete_combinations_queries(["a", "b"], ["1", "2"], 2)
 
