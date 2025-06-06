@@ -26,11 +26,12 @@ def test_pmc_search_and_store_ok(httpx_mock: HTTPXMock, search_and_store_respons
         json=search_and_store_response,
     )
 
-    result = search_and_store("my query")
+    result = search_and_store("my query", db=NCBIDatabase.PMC)
     assert result == {
         "total_results": 1,
         "query_key": "my_query_key",
         "web_env": "MCID_FAKE_UUID",
+        "db": NCBIDatabase.PMC.value,
     }
 
 
@@ -42,9 +43,10 @@ def test_pmc_search_and_store_no_result(httpx_mock: HTTPXMock, search_and_store_
         json=search_and_store_response_none,
     )
 
-    result = search_and_store("my query")
+    result = search_and_store("my query", db=NCBIDatabase.PMC)
     assert result == {
         "total_results": 0,
+        "db": NCBIDatabase.PMC.value,
     }
 
 
@@ -57,27 +59,30 @@ def test_pmc_search_and_store_error(httpx_mock: HTTPXMock):
     )
 
     with pytest.raises(HTTPException):
-        search_and_store("my query")
+        search_and_store("my query", db=NCBIDatabase.PMC)
 
 
 @pytest.mark.parametrize(
-    "uid, article_data, expected",
+    "article_data, expected",
     (
-        ("1", {"not the right key": 1}, {}),
+        ({"not the right key": 1}, {}),
         (
-            "1",
             {"articleids": [{"idtype": "pmid", "value": "1"}]},
-            ArticleIds(pmcid="PMC1", pmid="1"),
+            ArticleIds(pmcid=None, pmid="1"),
         ),
         (
-            "PMC_OTHER_1",
-            {"articleids": [{"idtype": "pmid", "value": "0"}]},
+            {
+                "articleids": [
+                    {"idtype": "pmid", "value": "0"},
+                    {"idtype": "pmcid", "value": "_OTHER_1"},
+                ]
+            },
             ArticleIds(pmcid="PMC_OTHER_1", pmid=None),
         ),
     ),
 )
-def test_extract_one_article_ids(uid, article_data, expected):
-    result = extract_ids_from_pcm_article(uid, article_data)
+def test_extract_one_article_ids(article_data, expected):
+    result = extract_ids_from_pcm_article(article_data)
     assert result == expected
 
 
@@ -85,12 +90,12 @@ def test_extract_all_article_ids():
     articles = {
         "uids": ["0", "1", "2", "PMC_OTHER_1"],
         "0": {"not the right key": 1},
-        "1": {"articleids": [{"idtype": "pmid", "value": "1"}]},
+        "1": {"articleids": [{"idtype": "pmid", "value": "1"}, {"idtype": "pmcid", "value": "1"}]},
         "PMC_OTHER_1": {"articleids": [{"idtype": "pmid", "value": "0"}]},
     }
-    expected = [ArticleIds(pmcid="PMC1", pmid="1"), ArticleIds(pmcid="PMC_OTHER_1", pmid=None)]
+    expected = [ArticleIds(pmcid="PMC1", pmid="1")]
 
-    result = extract_all_article_ids(articles)
+    result = extract_all_article_ids(articles, db=NCBIDatabase.PMC)
     assert result == expected
 
 
@@ -238,6 +243,8 @@ def test_fetch_all_stored_articles_error(httpx_mock: HTTPXMock):
         status_code=HTTPStatus.IM_A_TEAPOT,
     )
 
-    storage_infos = StorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+    storage_infos = StorageInfos(
+        query_key="query_key", web_env="web_env", total_results=10, db=NCBIDatabase.PMC
+    )
     with pytest.raises(HTTPException):
         fetch_all_stored_articles(storage_infos)
