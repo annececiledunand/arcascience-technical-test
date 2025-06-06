@@ -6,11 +6,10 @@ import typer
 from src.config import (
     UROLOGY_INDICATORS_FLAT,
     HEMOSTATIC_DEVICES_FLAT,
-    PMC_API_MAX_URI_LENGTH,
     HEMOSTATIC_DEVICES_MINI_FLAT,
     UROLOGY_INDICATORS_MINI_FLAT,
 )
-from src.eutils_retrieval.query import create_complete_combinations_queries
+from src.eutils_retrieval.query import create_pmc_queries
 from src.eutils_retrieval.search import search_pubmed_pmc
 import json
 import time
@@ -28,27 +27,23 @@ def main(
     start_year: Annotated[int, typer.Option(help="Filter articles that only starts after")] = 2023,
     end_year: Annotated[int, typer.Option(help="Filter articles that only end before")] = 2023,
 ):
-    if start_year > end_year:
-        raise Exception("`start_year` cannot be bigger than `end_year`")
-
     # Use mini to choose a small sample of the real data
     devices_indicators = (HEMOSTATIC_DEVICES_FLAT, UROLOGY_INDICATORS_FLAT)
     if mini:
         devices_indicators = (HEMOSTATIC_DEVICES_MINI_FLAT, UROLOGY_INDICATORS_MINI_FLAT)
 
     logger.info("Determining the number of queries necessary to call PMC API")
-    queries = create_complete_combinations_queries(
+    queries = create_pmc_queries(
         *devices_indicators,
-        query_max_length=PMC_API_MAX_URI_LENGTH,
+        year_bounds=(start_year, end_year),
     )
 
     results = []
-    queries = tuple(queries)
     for counter, query in enumerate(queries):
         start = time.time()
 
         logger.info(f"({counter + 1}/{len(queries)}) Searching PMC")
-        partial_results = search_pubmed_pmc(query, start_year=start_year, end_year=end_year)
+        partial_results = search_pubmed_pmc(query)
 
         results.extend(partial_results)
         logger.info(

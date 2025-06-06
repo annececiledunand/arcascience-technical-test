@@ -11,7 +11,12 @@ PMC_DATABASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
 URL_SEARCH_TAIL = "esearch.fcgi"
 URL_SUMMARY_TAIL = "esummary.fcgi"
 
+# Given by API endpoint when trying to retrieve more than 500 elements at once
 MAX_ALLOWED_SUMMARY_RETRIEVAL = 500
+
+# tested ok slightly above (less than 4186) but this seems like the nice spot to allow for a little of room error.
+# Server does not seem to specify their max URI, not following HTTP .1. protocol on the matter
+PMC_API_MAX_URI_LENGTH = 4000
 
 
 class PMCStorageInfos(TypedDict):
@@ -243,38 +248,18 @@ def extract_one_article_ids(uid: str, article_data: dict) -> ArticleIds:
     return ArticleIds(pmcid=formatted_pmcid, pmid=pmid)
 
 
-def search_pubmed_pmc(
-    query: str, start_year: int | None = None, end_year: int | None = None
-) -> list[dict]:
+def search_pubmed_pmc(query: str) -> list[ArticleIds]:
     """
     Search for articles matching the query and optional date range.
 
     Args:
         query (str): Search query string
-        start_year (int, optional): Start year for filtering
-        end_year (int, optional): End year for filtering
 
     Returns:
-        list: List of dictionaries containing article information
+        list[ArticleIds]: List of dictionaries containing article information
     """
-    # Add date range if specified
-    if start_year or end_year:
-        date_query = ""
-        if start_year:
-            date_query += f"{start_year}[PDAT]"
-        if start_year and end_year:
-            date_query += ":"
-        if end_year:
-            date_query += f"{end_year}[PDAT]"
-
-        query = f"({query}) AND {date_query}"
-
     # Currently only searches PMC - PubMed support needed (not implemented)
     results = search_pmc(query)
 
     # Filter out entries with no identifiers
-    filtered_results = [
-        info for info in results if info["pmcid"] is not None or info["pmid"] is not None
-    ]
-
-    return filtered_results
+    return [info for info in results if info["pmcid"] is not None or info["pmid"] is not None]
