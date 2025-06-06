@@ -1,4 +1,5 @@
 import re
+from http import HTTPStatus
 
 import httpx
 import pytest
@@ -29,12 +30,12 @@ def test_call_eutils(httpx_mock: HTTPXMock):
 
 
 def test_call_eutils_no_retry_error(httpx_mock: HTTPXMock):
-    httpx_mock.add_exception(
-        exception=httpx.ReadTimeout("Unable to read within timeout"),
+    httpx_mock.add_response(
+        status_code=HTTPStatus.REQUEST_TIMEOUT,
         url=re.compile(NCBIEndpoint.SEARCH.full_url() + "?.*"),
         method="GET",
     )
-    with pytest.raises(httpx.TimeoutException):
+    with pytest.raises(httpx.HTTPStatusError):
         call_eutils(
             NCBIEndpoint.SEARCH,
             params=SearchEndpointParams(
