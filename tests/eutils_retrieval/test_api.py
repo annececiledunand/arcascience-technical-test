@@ -5,7 +5,7 @@ import pytest
 from httpx import HTTPStatusError
 from pytest_httpx import HTTPXMock
 
-from eutils_retrieval.api import NCBIEndpoint, call_eutils, SearchEndpointParams, NCBIDatabase
+from src.eutils_retrieval.api import NCBIEndpoint, call_eutils, SearchEndpointParams, NCBIDatabase
 
 
 def test_call_eutils(httpx_mock: HTTPXMock):

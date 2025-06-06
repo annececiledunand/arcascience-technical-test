@@ -6,7 +6,7 @@ import pytest
 from httpx import URL
 from pytest_httpx import HTTPXMock
 
-from eutils_retrieval.api import NCBIEndpoint, NCBIDatabase
+from src.eutils_retrieval.api import NCBIEndpoint, NCBIDatabase
 from src.eutils_retrieval.search import (
     search_and_store,
     extract_ids_from_pcm_article,

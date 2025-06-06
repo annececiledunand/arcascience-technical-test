@@ -4,8 +4,8 @@ from typing import Callable
 
 from loguru import logger
 
-from eutils_retrieval.api import NCBIDatabase
-from eutils_retrieval.search import (
+from src.eutils_retrieval.api import NCBIDatabase
+from src.eutils_retrieval.search import (
     ArticleIds,
     StorageInfos,
     search_and_store,

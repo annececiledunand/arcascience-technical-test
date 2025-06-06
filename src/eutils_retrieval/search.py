@@ -2,7 +2,7 @@ from loguru import logger
 
 from typing import TypedDict, NotRequired
 
-from eutils_retrieval.api import call_eutils, NCBIEndpoint, NCBIDatabase
+from src.eutils_retrieval.api import call_eutils, NCBIEndpoint, NCBIDatabase
 
 # Given by API endpoint when trying to retrieve more than 500 elements at once
 MAX_ALLOWED_SUMMARY_RETRIEVAL = 500

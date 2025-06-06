@@ -4,7 +4,7 @@ from typing import Annotated
 
 import typer
 
-from eutils_retrieval.api import NCBIDatabase
+from src.eutils_retrieval.api import NCBIDatabase
 from retrieval import ncbi_article_retrieval
 from src.config import (
     UROLOGY_INDICATORS_FLAT,

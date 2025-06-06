@@ -4,10 +4,10 @@ from pathlib import Path
 
 from loguru import logger
 
-from eutils_retrieval.api import NCBIDatabase
-from eutils_retrieval.cross_database_search import ncbi_search_and_fetch, merge_article_ids
-from eutils_retrieval.query import create_e_queries
-from eutils_retrieval.search import ArticleIds
+from src.eutils_retrieval.api import NCBIDatabase
+from src.eutils_retrieval.cross_database_search import ncbi_search_and_fetch, merge_article_ids
+from src.eutils_retrieval.query import create_e_queries
+from src.eutils_retrieval.search import ArticleIds
 
 
 def ncbi_article_retrieval(
