@@ -1,8 +1,5 @@
 from src.utils import flatten_dict_to_list
 
-# tested ok slightly above (less than 4186) but this seems like the nice spot to allow for a little of room error.
-# Server does not seem to specify their max URI, not following HTTP .1. protocol on the matter
-PMC_API_MAX_URI_LENGTH = 4000
 
 HEMOSTATIC_DEVICES = {
     "Hemoblast": ["Biom'up"],

@@ -1,7 +1,7 @@
 import itertools
 from typing import Generator, Iterable
 
-from config import PMC_API_MAX_URI_LENGTH
+from src.eutils_retrieval.search import PMC_API_MAX_URI_LENGTH
 
 
 def create_pmc_queries(

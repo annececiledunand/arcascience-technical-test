@@ -11,7 +11,12 @@ PMC_DATABASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
 URL_SEARCH_TAIL = "esearch.fcgi"
 URL_SUMMARY_TAIL = "esummary.fcgi"
 
+# Given by API endpoint when trying to retrieve more than 500 elements at once
 MAX_ALLOWED_SUMMARY_RETRIEVAL = 500
+
+# tested ok slightly above (less than 4186) but this seems like the nice spot to allow for a little of room error.
+# Server does not seem to specify their max URI, not following HTTP .1. protocol on the matter
+PMC_API_MAX_URI_LENGTH = 4000
 
 
 class PMCStorageInfos(TypedDict):
