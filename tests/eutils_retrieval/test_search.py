@@ -132,6 +132,67 @@ def test_fetch_stored_articles_by_batch(httpx_mock: HTTPXMock):
         )
 
 
+def test_fetch_stored_articles_by_batch_retry_ok(httpx_mock: HTTPXMock):
+    # Tests that endpoint was retried after timeout and still got correct result since only 2 timeout instead of MAX_RETRY=3
+    httpx_mock.add_exception(
+        exception=httpx.ReadTimeout("Unable to read within timeout"),
+        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        method="GET",
+    )
+    httpx_mock.add_exception(
+        exception=httpx.ReadTimeout("Unable to read within timeout"),
+        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        method="GET",
+    )
+    httpx_mock.add_response(
+        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        method="GET",
+        json={"result": {"uids": ["bonjour"], "bonjour": 2}},
+    )
+
+    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+
+    result = fetch_stored_articles_by_batch(storage_infos, offset=7, limit=11)
+    assert result == {"uids": ["bonjour"], "bonjour": 2}
+
+    # check called 3 times (2 retry) the correct url
+    requests_made = httpx_mock.get_requests()
+    assert len(requests_made) == 3
+    assert all(
+        r.url
+        == URL(
+            "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&query_key=query_key&WebEnv=web_env&retstart=7&retmax=11&retmode=json"
+        )
+        for r in requests_made
+    )
+
+
+def test_fetch_stored_articles_by_batch_retry_fail(httpx_mock: HTTPXMock):
+    # Tests that endpoint was too many times retried after timeout
+    for _ in range(4):
+        httpx_mock.add_exception(
+            exception=httpx.ReadTimeout("Unable to read within timeout"),
+            url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+            method="GET",
+        )
+
+    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+    with pytest.raises(httpx.TimeoutException):
+        result = fetch_stored_articles_by_batch(storage_infos, offset=7, limit=11)
+        assert result is None
+
+    # check called 4 times (3 retry) the correct url
+    requests_made = httpx_mock.get_requests()
+    assert len(requests_made) == 4
+    assert all(
+        r.url
+        == URL(
+            "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&query_key=query_key&WebEnv=web_env&retstart=7&retmax=11&retmode=json"
+        )
+        for r in requests_made
+    )
+
+
 def test_fetch_all_stored_articles_with_batch(httpx_mock: HTTPXMock):
     httpx_mock.add_response(
         url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
