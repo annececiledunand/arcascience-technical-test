@@ -1,22 +1,13 @@
-from http import HTTPStatus
-
-import httpx
 from httpx_retries import RetryTransport, Retry
 from loguru import logger
 
 from typing import TypedDict, NotRequired
 
+from eutils_retrieval.api import call_eutils, NCBIEndpoint
 
-PMC_DATABASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
-URL_SEARCH_TAIL = "esearch.fcgi"
-URL_SUMMARY_TAIL = "esummary.fcgi"
 
 # Given by API endpoint when trying to retrieve more than 500 elements at once
 MAX_ALLOWED_SUMMARY_RETRIEVAL = 500
-
-# tested ok slightly above (less than 4186) but this seems like the nice spot to allow for a little of room error.
-# Server does not seem to specify their max URI, not following HTTP .1. protocol on the matter
-PMC_API_MAX_URI_LENGTH = 4000
 
 
 class PMCStorageInfos(TypedDict):
@@ -32,9 +23,6 @@ class ArticleIds(TypedDict):
 
     pmcid: str
     pmid: str | None
-
-
-TRANSPORT_SEARCH_ENDPOINT = RetryTransport(retry=Retry(total=2, backoff_factor=0.5))
 
 
 def pmc_search_and_store(query: str) -> PMCStorageInfos | None:
@@ -57,24 +45,7 @@ def pmc_search_and_store(query: str) -> PMCStorageInfos | None:
         "retmode": "json",
     }
 
-    url = f"{PMC_DATABASE_URL}{URL_SEARCH_TAIL}"
-
-    with httpx.Client(transport=TRANSPORT_SEARCH_ENDPOINT) as client:
-        search_response = client.get(url, params=search_params)
-
-    if search_response.status_code == HTTPStatus.REQUEST_URI_TOO_LONG:
-        logger.error(
-            f"Error while searching and storing PMC db: {HTTPStatus.REQUEST_URI_TOO_LONG} ({len(str(search_response.request.url))} chars in URL)"
-        )
-        return None
-
-    if search_response.status_code != HTTPStatus.OK:
-        logger.error(
-            f"Error searching PMC: ({search_response.status_code}){search_response.reason_phrase}"
-        )
-        return None  # todo: maybe raise exception here
-
-    search_data = search_response.json()
+    search_data = call_eutils(NCBIEndpoint.SEARCH, search_params)
     total_results = int(search_data["esearchresult"]["count"])
 
     if total_results == 0:
@@ -148,19 +119,10 @@ def fetch_stored_articles_by_batch(
         "retmax": limit,
         "retmode": "json",
     }
+    summary_data = call_eutils(NCBIEndpoint.SUMMARY, summary_params)
 
-    with httpx.Client(transport=TRANSPORT_SUMMARY_ENDPOINT) as client:
-        summary_response = client.get(
-            f"{PMC_DATABASE_URL}{URL_SUMMARY_TAIL}", params=summary_params
-        )
-
-    if summary_response.status_code != HTTPStatus.OK:
-        logger.error(f"Error retrieving PMC results: {summary_response.status_code}")
-        return None
-
-    summary_data = summary_response.json()
     if "result" not in summary_data:
-        logger.error(f"Unexpected response format\n{summary_response.text}")
+        logger.error(f"Unexpected response format\n{summary_data}")
         return None
 
     return summary_data.get("result")
@@ -230,7 +192,17 @@ def extract_one_article_ids(uid: str, article_data: dict) -> ArticleIds:
 
     Returns:
         ArticleIds
+
+    Notes:
+        {...
+        'articleids': [
+            {'idtype': 'pmid', 'value': '36645057'},
+            {'idtype': 'doi', 'value': '10.1080/0886022X.2022.2162419'},
+            {'idtype': 'pmcid', 'value': 'PMC9848274'}
+        ]
+        ...}
     """
+
     # Extract PMID if available
     pmid = None
     if "articleids" not in article_data:

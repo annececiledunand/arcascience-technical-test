@@ -1,67 +1,63 @@
 import re
 from http import HTTPStatus
+from http.client import HTTPException
 
 import httpx
 import pytest
 from httpx import URL
 from pytest_httpx import HTTPXMock
 
+from eutils_retrieval.api import NCBIEndpoint
 from src.eutils_retrieval.search import (
-    PMC_DATABASE_URL,
-    URL_SEARCH_TAIL,
     pmc_search_and_store,
     extract_one_article_ids,
     ArticleIds,
     extract_all_article_ids,
     PMCStorageInfos,
     fetch_all_stored_articles,
-    URL_SUMMARY_TAIL,
     fetch_stored_articles_by_batch,
 )
 
 
 def test_pmc_search_and_store_ok(httpx_mock: HTTPXMock, search_and_store_response):
     httpx_mock.add_response(
-        url=re.compile(PMC_DATABASE_URL + URL_SEARCH_TAIL + "?.*"),
+        url=re.compile(NCBIEndpoint.SEARCH.full_url() + "?.*"),
         method="GET",
         json=search_and_store_response,
     )
 
-    with httpx.Client():
-        result = pmc_search_and_store("my query")
-        assert result == {
-            "total_results": 1,
-            "query_key": "my_query_key",
-            "web_env": "MCID_FAKE_UUID",
-        }
+    result = pmc_search_and_store("my query")
+    assert result == {
+        "total_results": 1,
+        "query_key": "my_query_key",
+        "web_env": "MCID_FAKE_UUID",
+    }
 
 
 def test_pmc_search_and_store_no_result(httpx_mock: HTTPXMock, search_and_store_response_none):
     """Handle no document found"""
     httpx_mock.add_response(
-        url=re.compile(PMC_DATABASE_URL + URL_SEARCH_TAIL + "?.*"),
+        url=re.compile(NCBIEndpoint.SEARCH.full_url() + "?.*"),
         method="GET",
         json=search_and_store_response_none,
     )
 
-    with httpx.Client():
-        result = pmc_search_and_store("my query")
-        assert result == {
-            "total_results": 0,
-        }
+    result = pmc_search_and_store("my query")
+    assert result == {
+        "total_results": 0,
+    }
 
 
 def test_pmc_search_and_store_error(httpx_mock: HTTPXMock):
     """Should not break when any other code than 200 is given back"""
     httpx_mock.add_response(
-        url=re.compile(PMC_DATABASE_URL + URL_SEARCH_TAIL + "?.*"),
+        url=re.compile(NCBIEndpoint.SEARCH.full_url() + "?.*"),
         method="GET",
         status_code=HTTPStatus.IM_A_TEAPOT,
     )
 
-    with httpx.Client():
-        result = pmc_search_and_store("my query")
-        assert result is None
+    with pytest.raises(HTTPException):
+        pmc_search_and_store("my query")
 
 
 @pytest.mark.parametrize(
@@ -100,52 +96,50 @@ def test_extract_all_article_ids():
 
 def test_fetch_all_stored_articles(httpx_mock: HTTPXMock):
     httpx_mock.add_response(
-        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        url=re.compile(NCBIEndpoint.SUMMARY.full_url() + "?.*"),
         method="GET",
         json={"result": {"uids": ["bonjour"], "bonjour": 2}},
     )
 
     storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
 
-    with httpx.Client():
-        result = fetch_all_stored_articles(storage_infos)
-        assert result == {"uids": ["bonjour"], "bonjour": 2}
-        assert httpx_mock.get_request().url == URL(
-            "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&query_key=query_key&WebEnv=web_env&retstart=0&retmax=10&retmode=json"
-        )
+    result = fetch_all_stored_articles(storage_infos)
+    assert result == {"uids": ["bonjour"], "bonjour": 2}
+    assert httpx_mock.get_request().url == URL(
+        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&query_key=query_key&WebEnv=web_env&retstart=0&retmax=10&retmode=json"
+    )
 
 
 def test_fetch_stored_articles_by_batch(httpx_mock: HTTPXMock):
     httpx_mock.add_response(
-        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        url=re.compile(NCBIEndpoint.SUMMARY.full_url() + "?.*"),
         method="GET",
         json={"result": {"uids": ["bonjour"], "bonjour": 2}},
     )
 
     storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
 
-    with httpx.Client():
-        result = fetch_stored_articles_by_batch(storage_infos, offset=7, limit=11)
-        assert result == {"uids": ["bonjour"], "bonjour": 2}
-        assert httpx_mock.get_request().url == URL(
-            "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&query_key=query_key&WebEnv=web_env&retstart=7&retmax=11&retmode=json"
-        )
+    result = fetch_stored_articles_by_batch(storage_infos, offset=7, limit=11)
+    assert result == {"uids": ["bonjour"], "bonjour": 2}
+    assert httpx_mock.get_request().url == URL(
+        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&query_key=query_key&WebEnv=web_env&retstart=7&retmax=11&retmode=json"
+    )
 
 
 def test_fetch_stored_articles_by_batch_retry_ok(httpx_mock: HTTPXMock):
     # Tests that endpoint was retried after timeout and still got correct result since only 2 timeout instead of MAX_RETRY=3
     httpx_mock.add_exception(
         exception=httpx.ReadTimeout("Unable to read within timeout"),
-        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        url=re.compile(NCBIEndpoint.SUMMARY.full_url() + "?.*"),
         method="GET",
     )
     httpx_mock.add_exception(
         exception=httpx.ReadTimeout("Unable to read within timeout"),
-        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        url=re.compile(NCBIEndpoint.SUMMARY.full_url() + "?.*"),
         method="GET",
     )
     httpx_mock.add_response(
-        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        url=re.compile(NCBIEndpoint.SUMMARY.full_url() + "?.*"),
         method="GET",
         json={"result": {"uids": ["bonjour"], "bonjour": 2}},
     )
@@ -172,7 +166,7 @@ def test_fetch_stored_articles_by_batch_retry_fail(httpx_mock: HTTPXMock):
     for _ in range(4):
         httpx_mock.add_exception(
             exception=httpx.ReadTimeout("Unable to read within timeout"),
-            url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+            url=re.compile(NCBIEndpoint.SUMMARY.full_url() + "?.*"),
             method="GET",
         )
 
@@ -195,12 +189,12 @@ def test_fetch_stored_articles_by_batch_retry_fail(httpx_mock: HTTPXMock):
 
 def test_fetch_all_stored_articles_with_batch(httpx_mock: HTTPXMock):
     httpx_mock.add_response(
-        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        url=re.compile(NCBIEndpoint.SUMMARY.full_url() + "?.*"),
         method="GET",
         json={"result": {"uids": ["bonjour"], "bonjour": 1}},
     )
     httpx_mock.add_response(
-        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        url=re.compile(NCBIEndpoint.SUMMARY.full_url() + "?.*"),
         method="GET",
         json={"result": {"uids": ["hello"], "hello": 2}},
     )
@@ -214,26 +208,24 @@ def test_fetch_all_stored_articles_with_batch(httpx_mock: HTTPXMock):
 
 def test_fetch_all_stored_articles_no_result(httpx_mock: HTTPXMock):
     httpx_mock.add_response(
-        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        url=re.compile(NCBIEndpoint.SUMMARY.full_url() + "?.*"),
         method="GET",
         json="bonjour",
     )
 
     storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
 
-    with httpx.Client():
-        result = fetch_all_stored_articles(storage_infos)
-        assert result == {}
+    result = fetch_all_stored_articles(storage_infos)
+    assert result == {}
 
 
 def test_fetch_all_stored_articles_error(httpx_mock: HTTPXMock):
     httpx_mock.add_response(
-        url=re.compile(PMC_DATABASE_URL + URL_SUMMARY_TAIL + "?.*"),
+        url=re.compile(NCBIEndpoint.SUMMARY.full_url() + "?.*"),
         method="GET",
         status_code=HTTPStatus.IM_A_TEAPOT,
     )
 
     storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
-    with httpx.Client():
-        result = fetch_all_stored_articles(storage_infos)
-        assert result == {}
+    with pytest.raises(HTTPException):
+        fetch_all_stored_articles(storage_infos)
