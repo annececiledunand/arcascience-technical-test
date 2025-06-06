@@ -2,7 +2,7 @@ import re
 
 import pytest
 
-from cross_database_search import (
+from src.cross_database_search import (
     keep_tuple_with_most_infos,
     merge_article_ids,
     ncbi_search_and_fetch,
