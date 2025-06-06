@@ -1,22 +1,37 @@
+from enum import Enum
 from pathlib import Path
 from typing import Annotated
 
 import typer
 
+from src.eutils_retrieval.api import NCBIDatabase
+from retrieval import ncbi_article_retrieval
 from src.config import (
     UROLOGY_INDICATORS_FLAT,
     HEMOSTATIC_DEVICES_FLAT,
     HEMOSTATIC_DEVICES_MINI_FLAT,
     UROLOGY_INDICATORS_MINI_FLAT,
 )
-from src.eutils_retrieval.query import create_pmc_queries
-from src.eutils_retrieval.search import search_pubmed_pmc
-import json
-import time
-from loguru import logger
-
 
 SUBMISSION_RESULTS_FOLDER = Path(__file__).parent / "submission_results"
+
+
+class DbNameArg(Enum):
+    """CLi db name to use requests. typer does not support literals yet."""
+
+    ALL = "all"
+    PUB_MED = "pub_med"
+    PMC = "pmc"
+
+
+DB_NAME_MAPPING = {
+    DbNameArg.ALL: (
+        NCBIDatabase.PUB_MED,
+        NCBIDatabase.PMC,
+    ),
+    DbNameArg.PUB_MED: NCBIDatabase.PUB_MED,
+    DbNameArg.PMC: NCBIDatabase.PMC,
+}
 
 
 def main(
@@ -26,39 +41,30 @@ def main(
     ] = False,
     start_year: Annotated[int, typer.Option(help="Filter articles that only starts after")] = 2023,
     end_year: Annotated[int, typer.Option(help="Filter articles that only end before")] = 2023,
+    intermediate: Annotated[
+        bool,
+        typer.Option(help="Store intermediate found article ids from databases for each query."),
+    ] = False,
+    db_name: Annotated[
+        DbNameArg, typer.Option(help="Dbs to call for search. Default to all")
+    ] = DbNameArg.ALL,
 ):
+    """Typer method to allow cli run for `ncbi_article_retrieval`"""
+    db = DB_NAME_MAPPING[db_name]
     # Use mini to choose a small sample of the real data
     devices_indicators = (HEMOSTATIC_DEVICES_FLAT, UROLOGY_INDICATORS_FLAT)
     if mini:
         devices_indicators = (HEMOSTATIC_DEVICES_MINI_FLAT, UROLOGY_INDICATORS_MINI_FLAT)
 
-    logger.info("Determining the number of queries necessary to call PMC API")
-    queries = create_pmc_queries(
-        *devices_indicators,
-        year_bounds=(start_year, end_year),
-    )
-
-    results = []
-    for counter, query in enumerate(queries):
-        start = time.time()
-
-        logger.info(f"({counter + 1}/{len(queries)}) Searching PMC")
-        partial_results = search_pubmed_pmc(query)
-
-        results.extend(partial_results)
-        logger.info(
-            f"({counter + 1}/{len(queries)}) Found {len(results)} results, took {time.time() - start} seconds"
-        )
-
-    logger.success(f"Found {len(results)} total results, took {time.time() - start} seconds")
-
-    # Save the results to a JSON file
+    # Check that the folder exists, or creates it
     SUBMISSION_RESULTS_FOLDER.mkdir(exist_ok=True)
-    result_file_path = SUBMISSION_RESULTS_FOLDER / "retrieved_ids.json"
-
-    logger.info(f"Writing results into {result_file_path}")
-    with result_file_path.open("w") as json_writer:
-        json.dump(results, json_writer, indent=4)
+    ncbi_article_retrieval(
+        devices_indicators=devices_indicators,
+        year_bounds=(start_year, end_year),
+        db=db,
+        output_folder=SUBMISSION_RESULTS_FOLDER,
+        store_intermediate_results=intermediate,
+    )
 
 
 if __name__ == "__main__":
