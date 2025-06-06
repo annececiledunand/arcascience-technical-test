@@ -231,8 +231,8 @@ def test_keep_tuple_with_most_infos():
         {
             ("a", "b"),
             ("a", None),  # duplicated first key
-            ("aa", "bb"),
             ("aa", None),  # duplicated first key
+            ("aa", "bb"),
             ("1", None),  #  not duplicated
             ("c", "d"),
             (None, "d"),  # duplicated second key
