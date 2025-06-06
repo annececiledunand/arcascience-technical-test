@@ -76,7 +76,7 @@ def pmc_search_and_store(query: str) -> PMCStorageInfos | None:
         logger.info("No results found in PMC.")
         return PMCStorageInfos(total_results=0)
 
-    logger.success(f"Found {total_results} results in PMC. Storing them for future querying")
+    logger.info(f"Found {total_results} results in PMC. Storing them for future querying")
 
     return PMCStorageInfos(
         total_results=total_results,
