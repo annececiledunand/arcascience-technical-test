@@ -1,5 +1,7 @@
+import json
 import time
 from collections.abc import Callable
+from pathlib import Path
 
 from loguru import logger
 
@@ -43,3 +45,22 @@ def add_timer_and_logger(task_description: str) -> Callable:  # pragma: no cover
         return wrapper
 
     return decorator
+
+
+def store_data_as_json(data: list | dict, file_path: Path) -> None:
+    """Store data into a json file.
+
+    Args:
+        data (dict or list): sdata to store into file
+        file_path (Path): path of file to store into (.json extension)
+
+    """
+    if file_path.suffix != ".json":
+        msg = f"File name {file_path} should be of json extension"
+        raise ValueError(msg)
+
+    logger.debug(f"Writing data into {file_path}")
+
+    file_path.parent.mkdir(exist_ok=True)
+    with file_path.open("w") as json_writer:
+        json.dump(data, json_writer, indent=4)

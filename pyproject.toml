@@ -32,3 +32,11 @@ line-length = 100
     "ANN",  # do not enforce annotations on tests
     "PLR2004",  # magic numbers are allowed in tests ...
 ]
+
+[tool.coverage.run]
+branch = true
+source = ["./src"]
+omit = [
+    # omit this single file
+    "src/config.py",
+]

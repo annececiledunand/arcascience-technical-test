@@ -1,13 +1,14 @@
-import json
 import time
 from pathlib import Path
 
 from loguru import logger
 
+from src.cross_database_search import merge_article_ids, ncbi_search_and_fetch
 from src.eutils_retrieval.api import NCBIDatabase
-from src.eutils_retrieval.cross_database_search import merge_article_ids, ncbi_search_and_fetch
 from src.eutils_retrieval.query import create_e_queries
-from src.eutils_retrieval.search import ArticleIds
+from src.utils import store_data_as_json
+
+STORE_RESULTS_FILE_NAME = "retrieved_ids.json"
 
 
 def ncbi_article_retrieval(
@@ -52,13 +53,4 @@ def ncbi_article_retrieval(
     logger.success(f"Found {len(merged_results)} total results, took {time.time() - start} seconds")
 
     # 4. Store results into a json file
-    _store_results(merged_results, output_folder)
-
-
-def _store_results(results: list[ArticleIds], folder: Path) -> None:
-    """Write all article ids into a JSON file inside `folder`."""
-    result_file_path = folder / "retrieved_ids.json"
-
-    logger.info(f"Writing results into {result_file_path}")
-    with result_file_path.open("w") as json_writer:
-        json.dump(results, json_writer, indent=4)
+    store_data_as_json(merged_results, output_folder / STORE_RESULTS_FILE_NAME)
