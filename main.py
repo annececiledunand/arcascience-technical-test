@@ -4,14 +4,14 @@ from typing import Annotated
 
 import typer
 
-from src.eutils_retrieval.api import NCBIDatabase
 from retrieval import ncbi_article_retrieval
 from src.config import (
-    UROLOGY_INDICATORS_FLAT,
     HEMOSTATIC_DEVICES_FLAT,
     HEMOSTATIC_DEVICES_MINI_FLAT,
+    UROLOGY_INDICATORS_FLAT,
     UROLOGY_INDICATORS_MINI_FLAT,
 )
+from src.eutils_retrieval.api import NCBIDatabase
 
 SUBMISSION_RESULTS_FOLDER = Path(__file__).parent / "submission_results"
 
@@ -46,10 +46,11 @@ def main(
         typer.Option(help="Store intermediate found article ids from databases for each query."),
     ] = False,
     db_name: Annotated[
-        DbNameArg, typer.Option(help="Dbs to call for search. Default to all")
+        DbNameArg,
+        typer.Option(help="Dbs to call for search. Default to all"),
     ] = DbNameArg.ALL,
-):
-    """Typer method to allow cli run for `ncbi_article_retrieval`"""
+) -> None:
+    """Typer method to allow cli run for `ncbi_article_retrieval`."""
     db = DB_NAME_MAPPING[db_name]
     # Use mini to choose a small sample of the real data
     devices_indicators = (HEMOSTATIC_DEVICES_FLAT, UROLOGY_INDICATORS_FLAT)

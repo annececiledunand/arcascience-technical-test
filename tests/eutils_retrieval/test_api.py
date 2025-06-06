@@ -5,7 +5,7 @@ import pytest
 from httpx import HTTPStatusError
 from pytest_httpx import HTTPXMock
 
-from src.eutils_retrieval.api import NCBIEndpoint, call_eutils, SearchEndpointParams, NCBIDatabase
+from src.eutils_retrieval.api import NCBIDatabase, NCBIEndpoint, SearchEndpointParams, call_eutils
 
 
 def test_call_eutils(httpx_mock: HTTPXMock):
@@ -18,7 +18,10 @@ def test_call_eutils(httpx_mock: HTTPXMock):
     result = call_eutils(
         NCBIEndpoint.SEARCH,
         params=SearchEndpointParams(
-            db=NCBIDatabase.PMC, term="my_query", usehistory="n", retmode="json"
+            db=NCBIDatabase.PMC,
+            term="my_query",
+            usehistory="n",
+            retmode="json",
         ),
         retry=0,
     )
@@ -35,7 +38,10 @@ def test_call_eutils_no_retry_error(httpx_mock: HTTPXMock):
         call_eutils(
             NCBIEndpoint.SEARCH,
             params=SearchEndpointParams(
-                db=NCBIDatabase.PMC, term="my_query", usehistory="n", retmode="json"
+                db=NCBIDatabase.PMC,
+                term="my_query",
+                usehistory="n",
+                retmode="json",
             ),
             retry=0,
         )
@@ -52,7 +58,10 @@ def test_call_eutils_error_uri_too_long(httpx_mock: HTTPXMock):
         call_eutils(
             NCBIEndpoint.SEARCH,
             params=SearchEndpointParams(
-                db=NCBIDatabase.PMC, term="my_query", usehistory="n", retmode="json"
+                db=NCBIDatabase.PMC,
+                term="my_query",
+                usehistory="n",
+                retmode="json",
             ),
             retry=0,
         )
@@ -73,7 +82,10 @@ def test_call_eutils_retry(httpx_mock: HTTPXMock):
     result = call_eutils(
         NCBIEndpoint.SEARCH,
         params=SearchEndpointParams(
-            db=NCBIDatabase.PMC, term="my_query", usehistory="n", retmode="json"
+            db=NCBIDatabase.PMC,
+            term="my_query",
+            usehistory="n",
+            retmode="json",
         ),
         retry=2,
     )

@@ -1,6 +1,5 @@
 from src.utils import flatten_dict_to_list
 
-
 HEMOSTATIC_DEVICES = {
     "Hemoblast": ["Biom'up"],
     "Hemoblast Bellows": ["Bellows applicator"],
@@ -35,7 +34,7 @@ HEMOSTATIC_DEVICES = {
 HEMOSTATIC_DEVICES_FLAT = flatten_dict_to_list(HEMOSTATIC_DEVICES)
 
 
-HEMOSTATIC_DEVICES_MINI = {k: v for k, v in list(HEMOSTATIC_DEVICES.items())[:10]}
+HEMOSTATIC_DEVICES_MINI = dict(list(HEMOSTATIC_DEVICES.items())[:10])
 
 HEMOSTATIC_DEVICES_MINI_FLAT = flatten_dict_to_list(HEMOSTATIC_DEVICES_MINI)
 
@@ -184,7 +183,7 @@ UROLOGY_INDICATORS = {
         "vascular bypass grafting",
         "IVC reconstruction",
         "caval reconstruction",
-    ]
+    ],
 }
 
 UROLOGY_INDICATORS_FLAT = flatten_dict_to_list(UROLOGY_INDICATORS)
