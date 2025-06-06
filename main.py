@@ -4,7 +4,6 @@ from typing import Annotated
 
 import typer
 
-from retrieval import ncbi_article_retrieval
 from src.config import (
     HEMOSTATIC_DEVICES_FLAT,
     HEMOSTATIC_DEVICES_MINI_FLAT,
@@ -12,6 +11,7 @@ from src.config import (
     UROLOGY_INDICATORS_MINI_FLAT,
 )
 from src.eutils_retrieval.api import NCBIDatabase
+from src.retrieval import ncbi_article_retrieval
 
 SUBMISSION_RESULTS_FOLDER = Path(__file__).parent / "submission_results"
 
