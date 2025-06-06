@@ -1,10 +1,10 @@
 from enum import Enum
 from http import HTTPStatus
-from http.client import HTTPException
 from typing import TypedDict, Literal
 
 import httpx
 from httpx_retries import RetryTransport, Retry
+from loguru import logger
 
 NCBI_EUTILS_BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
 """NCBI E-utilities api url"""
@@ -90,13 +90,15 @@ def call_eutils(
         response = client.get(endpoint.full_url(), params=endpoint.validated_params(params))
 
     if response.status_code == HTTPStatus.REQUEST_URI_TOO_LONG:
-        raise HTTPException(
+        logger.error(
             f"Error while calling {endpoint}: {HTTPStatus.REQUEST_URI_TOO_LONG} ({len(str(response.request.url))} chars in URL)"
         )
+        response.raise_for_status()
 
     if response.status_code != HTTPStatus.OK:
-        raise HTTPException(
+        logger.error(
             f"Error while calling {endpoint}: ({response.status_code}){response.reason_phrase}"
         )
+        response.raise_for_status()
 
     return response.json()

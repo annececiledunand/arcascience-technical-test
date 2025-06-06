@@ -1,6 +1,5 @@
 import re
 from http import HTTPStatus
-from http.client import HTTPException
 
 import httpx
 import pytest
@@ -58,7 +57,7 @@ def test_pmc_search_and_store_error(httpx_mock: HTTPXMock):
         status_code=HTTPStatus.IM_A_TEAPOT,
     )
 
-    with pytest.raises(HTTPException):
+    with pytest.raises(httpx.HTTPStatusError, match="Client error '418 I'm a teapot' for url"):
         search_and_store("my query", db=NCBIDatabase.PMC)
 
 
@@ -246,5 +245,5 @@ def test_fetch_all_stored_articles_error(httpx_mock: HTTPXMock):
     storage_infos = StorageInfos(
         query_key="query_key", web_env="web_env", total_results=10, db=NCBIDatabase.PMC
     )
-    with pytest.raises(HTTPException):
+    with pytest.raises(httpx.HTTPStatusError, match="Client error '418 I'm a teapot' for url"):
         fetch_all_stored_articles(storage_infos)
