@@ -142,7 +142,7 @@ def extract_all_article_ids(articles: dict, db: NCBIDatabase) -> list[ArticleIds
     """
     uids = articles.pop("uids")  # uids key with list of all uids as key:value in dict
     if set(uids) != set(articles.keys()):
-        logger.warning(
+        logger.warning(  # pragma: no cover
             f"Difference between results and uids list given\n"
             f"Uids given in list: {len(set(uids))}\n"
             f"Uids as keys for result: {len(set(articles.keys()))}"

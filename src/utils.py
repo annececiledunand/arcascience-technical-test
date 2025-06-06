@@ -17,7 +17,7 @@ def flatten_dict_to_list(d: dict[str, list[str]]) -> list:
     return [item for key, values in d.items() for item in [key] + values]
 
 
-def add_timer_and_logger(task_description: str):
+def add_timer_and_logger(task_description: str):  # pragma: no cover
     """Decorator that logs (INFO) the task start and end time.
 
     Notes:
