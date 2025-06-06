@@ -16,7 +16,7 @@ from src.eutils_retrieval.search import (
 from utils import add_timer_and_logger, store_data_as_json
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
+    from collections.abc import Callable  # pragma: no cover
 
 
 def ncbi_search_and_fetch(
@@ -43,7 +43,7 @@ def ncbi_search_and_fetch(
     }.get(db, pubmed_pmc_cross_search)
 
     results = []
-    db_label = db.value if isinstance(db, NCBIDatabase) else tuple(d.value for d in db)
+    db_label = db.value if not isinstance(db, tuple) else tuple(d.value for d in db)
     logger.info(
         f"Will run {len(queries)} queries on {db_label}",
     )
