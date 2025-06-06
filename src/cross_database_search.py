@@ -13,7 +13,7 @@ from src.eutils_retrieval.search import (
     fetch_all_stored_articles,
     search_and_store,
 )
-from utils import add_timer_and_logger, store_data_as_json
+from src.utils import add_timer_and_logger, store_data_as_json
 
 if TYPE_CHECKING:
     from collections.abc import Callable  # pragma: no cover
