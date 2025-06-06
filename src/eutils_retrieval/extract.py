@@ -1,7 +1,7 @@
 from loguru import logger
 
-from eutils_retrieval.api import NCBIDatabase
-from eutils_retrieval.search import ArticleIds
+from src.eutils_retrieval.api import NCBIDatabase
+from src.eutils_retrieval.search import ArticleIds
 
 
 def extract_all_db_article_ids(articles: dict, db: NCBIDatabase) -> list[ArticleIds]:

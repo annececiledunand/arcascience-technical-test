@@ -1,8 +1,8 @@
 import json
 import re
 
-from eutils_retrieval.api import NCBIDatabase, NCBIEndpoint
 from retrieval import STORE_RESULTS_FILE_NAME, ncbi_article_retrieval
+from src.eutils_retrieval.api import NCBIDatabase, NCBIEndpoint
 
 TEST_PUB_MED_ARTICLE_IDS = [
     {"idtype": "pubmed", "value": "36645057"},  # PubMed

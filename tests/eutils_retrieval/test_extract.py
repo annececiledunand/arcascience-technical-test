@@ -1,12 +1,12 @@
 import pytest
 
-from eutils_retrieval.api import NCBIDatabase
-from eutils_retrieval.extract import (
+from src.eutils_retrieval.api import NCBIDatabase
+from src.eutils_retrieval.extract import (
     extract_all_db_article_ids,
     extract_ids_from_pcm_article,
     extract_ids_from_pub_med_article,
 )
-from eutils_retrieval.search import ArticleIds
+from src.eutils_retrieval.search import ArticleIds
 
 
 @pytest.mark.parametrize(

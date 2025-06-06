@@ -10,7 +10,7 @@ from cross_database_search import (
     pub_med_search_and_fetch,
     pubmed_pmc_cross_search,
 )
-from eutils_retrieval.api import NCBIDatabase, NCBIEndpoint
+from src.eutils_retrieval.api import NCBIDatabase, NCBIEndpoint
 
 TEST_PUB_MED_ARTICLE_IDS = [
     {"idtype": "pubmed", "value": "36645057"},  # PubMed
