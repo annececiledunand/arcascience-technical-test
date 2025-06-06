@@ -28,7 +28,7 @@ jobs:
         run: uv sync --locked
 
       - name: Run tests
-        run: uv run coverage run --branch -m pytest
+        run: uv run coverage run --source . --branch -m pytest
 
       - name: Check coverage (100%)
         run: uv run coverage report --include "src/*" --skip-covered --skip-empty --show-missing --fail-under=100
