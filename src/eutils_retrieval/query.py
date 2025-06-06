@@ -1,6 +1,36 @@
 import itertools
 from typing import Generator, Iterable
 
+from config import PMC_API_MAX_URI_LENGTH
+
+
+def create_pmc_queries(
+    devices: Iterable[str],
+    indicators: Iterable[str],
+    year_bounds: tuple[int | None, int | None] = (None, None),
+) -> tuple[str, ...]:
+    """
+    Create all search queries combining hemostatic devices and urology indicators, limited by endpoint URI length allowed.
+
+    Args:
+        devices (list): List of hemostatic devices and related terms
+        indicators (list): List of urology indicators and related terms
+        year_bounds (tuple[int, int]): Filters to apply to search query (start_date, end_date). Both are optionals.
+
+    Returns:
+        tuple[str]: All combination search queries
+    """
+    year_bound_query = create_year_bound_query(*year_bounds)
+    queries = create_complete_combinations_queries(
+        devices,
+        indicators,
+        query_max_length=PMC_API_MAX_URI_LENGTH,
+    )
+
+    if year_bound_query != "":
+        return tuple(f"({q}) AND {year_bound_query}" for q in queries)
+    return tuple(queries)
+
 
 def create_one_combination_query(devices: Iterable[str], indicators: Iterable[str]) -> str:
     """
@@ -19,6 +49,34 @@ def create_one_combination_query(devices: Iterable[str], indicators: Iterable[st
 
     # Combine with AND to find articles mentioning both
     return f"({device_query}) AND ({indicator_query})"
+
+
+def create_year_bound_query(start_year: int | None = None, end_year: int | None = None) -> str:
+    """
+    Create a condition with year bounds for query. If both start_date and end_date are given, corresponds to a range.
+    If either one is given, correspond to a fixed year query.
+
+    Args:
+        start_year (int): The start year of publication
+        end_year (int): the ned year of publication
+
+    Returns:
+        str: the date filter query
+    """
+    if start_year and end_year and start_year > end_year:
+        raise ValueError("`start_year` cannot be bigger than `end_year`")
+
+    # Add date range if specified
+    date_query = ""
+    if start_year or end_year:
+        if start_year:
+            date_query += f"{start_year}[PDAT]"
+        if start_year and end_year:
+            date_query += ":"
+        if end_year:
+            date_query += f"{end_year}[PDAT]"
+
+    return date_query
 
 
 OR_QUERY = " OR "
