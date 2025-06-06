@@ -1,12 +1,14 @@
 import itertools
 from typing import Generator, Iterable
 
+from loguru import logger
+
 # tested ok slightly above (less than 4186) but this seems like the nice spot to allow for a little of room error.
 # Server does not seem to specify their max URI, not following HTTP .1. protocol on the matter
 PMC_API_MAX_URI_LENGTH = 4000
 
 
-def create_pmc_queries(
+def create_e_queries(
     devices: Iterable[str],
     indicators: Iterable[str],
     year_bounds: tuple[int | None, int | None] = (None, None),
@@ -22,6 +24,10 @@ def create_pmc_queries(
     Returns:
         tuple[str]: All combination search queries
     """
+    logger.info(
+        "Determining the number of queries necessary to describe all devices and indicators"
+    )
+
     year_bound_query = create_year_bound_query(*year_bounds)
     queries = create_complete_combinations_queries(
         devices,

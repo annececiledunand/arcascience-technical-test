@@ -7,13 +7,13 @@ import pytest
 from httpx import URL
 from pytest_httpx import HTTPXMock
 
-from eutils_retrieval.api import NCBIEndpoint
+from eutils_retrieval.api import NCBIEndpoint, NCBIDatabase
 from src.eutils_retrieval.search import (
-    pmc_search_and_store,
-    extract_one_article_ids,
+    search_and_store,
+    extract_ids_from_pcm_article,
     ArticleIds,
     extract_all_article_ids,
-    PMCStorageInfos,
+    StorageInfos,
     fetch_all_stored_articles,
     fetch_stored_articles_by_batch,
 )
@@ -26,7 +26,7 @@ def test_pmc_search_and_store_ok(httpx_mock: HTTPXMock, search_and_store_respons
         json=search_and_store_response,
     )
 
-    result = pmc_search_and_store("my query")
+    result = search_and_store("my query")
     assert result == {
         "total_results": 1,
         "query_key": "my_query_key",
@@ -42,7 +42,7 @@ def test_pmc_search_and_store_no_result(httpx_mock: HTTPXMock, search_and_store_
         json=search_and_store_response_none,
     )
 
-    result = pmc_search_and_store("my query")
+    result = search_and_store("my query")
     assert result == {
         "total_results": 0,
     }
@@ -57,7 +57,7 @@ def test_pmc_search_and_store_error(httpx_mock: HTTPXMock):
     )
 
     with pytest.raises(HTTPException):
-        pmc_search_and_store("my query")
+        search_and_store("my query")
 
 
 @pytest.mark.parametrize(
@@ -77,7 +77,7 @@ def test_pmc_search_and_store_error(httpx_mock: HTTPXMock):
     ),
 )
 def test_extract_one_article_ids(uid, article_data, expected):
-    result = extract_one_article_ids(uid, article_data)
+    result = extract_ids_from_pcm_article(uid, article_data)
     assert result == expected
 
 
@@ -101,7 +101,9 @@ def test_fetch_all_stored_articles(httpx_mock: HTTPXMock):
         json={"result": {"uids": ["bonjour"], "bonjour": 2}},
     )
 
-    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+    storage_infos = StorageInfos(
+        query_key="query_key", web_env="web_env", total_results=10, db=NCBIDatabase.PMC
+    )
 
     result = fetch_all_stored_articles(storage_infos)
     assert result == {"uids": ["bonjour"], "bonjour": 2}
@@ -117,7 +119,9 @@ def test_fetch_stored_articles_by_batch(httpx_mock: HTTPXMock):
         json={"result": {"uids": ["bonjour"], "bonjour": 2}},
     )
 
-    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+    storage_infos = StorageInfos(
+        query_key="query_key", web_env="web_env", total_results=10, db=NCBIDatabase.PMC
+    )
 
     result = fetch_stored_articles_by_batch(storage_infos, offset=7, limit=11)
     assert result == {"uids": ["bonjour"], "bonjour": 2}
@@ -144,7 +148,9 @@ def test_fetch_stored_articles_by_batch_retry_ok(httpx_mock: HTTPXMock):
         json={"result": {"uids": ["bonjour"], "bonjour": 2}},
     )
 
-    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+    storage_infos = StorageInfos(
+        query_key="query_key", web_env="web_env", total_results=10, db=NCBIDatabase.PMC
+    )
 
     result = fetch_stored_articles_by_batch(storage_infos, offset=7, limit=11)
     assert result == {"uids": ["bonjour"], "bonjour": 2}
@@ -170,7 +176,9 @@ def test_fetch_stored_articles_by_batch_retry_fail(httpx_mock: HTTPXMock):
             method="GET",
         )
 
-    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+    storage_infos = StorageInfos(
+        query_key="query_key", web_env="web_env", total_results=10, db=NCBIDatabase.PMC
+    )
     with pytest.raises(httpx.TimeoutException):
         result = fetch_stored_articles_by_batch(storage_infos, offset=7, limit=11)
         assert result is None
@@ -199,7 +207,9 @@ def test_fetch_all_stored_articles_with_batch(httpx_mock: HTTPXMock):
         json={"result": {"uids": ["hello"], "hello": 2}},
     )
 
-    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=2)
+    storage_infos = StorageInfos(
+        query_key="query_key", web_env="web_env", total_results=2, db=NCBIDatabase.PMC
+    )
 
     result = fetch_all_stored_articles(storage_infos, max_allowed_elements=1)
     # check that the batching method is called two times
@@ -213,7 +223,9 @@ def test_fetch_all_stored_articles_no_result(httpx_mock: HTTPXMock):
         json="bonjour",
     )
 
-    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+    storage_infos = StorageInfos(
+        query_key="query_key", web_env="web_env", total_results=10, db=NCBIDatabase.PMC
+    )
 
     result = fetch_all_stored_articles(storage_infos)
     assert result == {}
@@ -226,6 +238,6 @@ def test_fetch_all_stored_articles_error(httpx_mock: HTTPXMock):
         status_code=HTTPStatus.IM_A_TEAPOT,
     )
 
-    storage_infos = PMCStorageInfos(query_key="query_key", web_env="web_env", total_results=10)
+    storage_infos = StorageInfos(query_key="query_key", web_env="web_env", total_results=10)
     with pytest.raises(HTTPException):
         fetch_all_stored_articles(storage_infos)

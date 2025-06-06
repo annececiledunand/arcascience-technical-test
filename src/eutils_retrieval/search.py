@@ -1,18 +1,17 @@
-from httpx_retries import RetryTransport, Retry
 from loguru import logger
 
 from typing import TypedDict, NotRequired
 
-from eutils_retrieval.api import call_eutils, NCBIEndpoint
-
+from eutils_retrieval.api import call_eutils, NCBIEndpoint, NCBIDatabase
 
 # Given by API endpoint when trying to retrieve more than 500 elements at once
 MAX_ALLOWED_SUMMARY_RETRIEVAL = 500
 
 
-class PMCStorageInfos(TypedDict):
+class StorageInfos(TypedDict):
     """Minimal PMC search result needed to fetch stored articles"""
 
+    db: NCBIDatabase
     total_results: int
     web_env: NotRequired[str]
     query_key: NotRequired[str]
@@ -21,40 +20,43 @@ class PMCStorageInfos(TypedDict):
 class ArticleIds(TypedDict):
     """Article ids from both PMC and PubMed databases"""
 
-    pmcid: str
+    pmcid: str | None
     pmid: str | None
 
 
-def pmc_search_and_store(query: str) -> PMCStorageInfos | None:
+def search_and_store(query: str, db: NCBIDatabase) -> StorageInfos | None:
     """
     Search PMC database and ask to store them for later retrieval, for articles matching the given query.
 
     Args:
         query (str): Search query string
+        db (NCBIDatabase): database to search from
 
     Returns:
-        PMCStorageInfos: Information to retrieve requested data in storage
+        StorageInfos: Information to retrieve requested data in storage
 
     Notes:
         See https://www.ncbi.nlm.nih.gov/books/NBK25500/#chapter1.Searching_a_Database -> Storing Search Results
     """
     search_params = {
-        "db": "pmc",
+        "db": db.value,
         "term": query,
         "usehistory": "y",  # here ask to store data
         "retmode": "json",
     }
 
+    logger.debug(f"Calling {db.value} database for search and store.")
     search_data = call_eutils(NCBIEndpoint.SEARCH, search_params)
     total_results = int(search_data["esearchresult"]["count"])
 
     if total_results == 0:
-        logger.info("No results found in PMC.")
-        return PMCStorageInfos(total_results=0)
+        logger.debug(f"No results found in {db.value}.")
+        return StorageInfos(total_results=0, db=db)
 
-    logger.info(f"Found {total_results} results in PMC. Storing them for future querying")
+    logger.debug(f"Found {total_results} results in {db.value}. Storing them for future querying")
 
-    return PMCStorageInfos(
+    return StorageInfos(
+        db=db,
         total_results=total_results,
         web_env=search_data["esearchresult"]["webenv"],
         query_key=search_data["esearchresult"]["querykey"],
@@ -62,12 +64,12 @@ def pmc_search_and_store(query: str) -> PMCStorageInfos | None:
 
 
 def fetch_all_stored_articles(
-    storage_infos: PMCStorageInfos, max_allowed_elements: int = MAX_ALLOWED_SUMMARY_RETRIEVAL
+    storage_infos: StorageInfos, max_allowed_elements: int = MAX_ALLOWED_SUMMARY_RETRIEVAL
 ) -> dict | None:
     """Fetch all stored articles data requested in previous db query
 
     Args:
-        storage_infos (PMCStorageInfos): Minimal infos needed to retrieve previously queried articles
+        storage_infos (StorageInfos): Minimal infos needed to retrieve previously queried articles
         max_allowed_elements (int): Max number of elements allowed by the api endpoint to fetch data
 
     Returns:
@@ -82,6 +84,9 @@ def fetch_all_stored_articles(
     # Creates batches of fixed size `limit`, in order to reach `total_elements` by generating a couple
     # (offset, limit=MAX_ALLOWED_SUMMARY_RETRIEVAL) to the request
     for offset in range(0, total_elements, limit):
+        logger.debug(
+            f"Calling {storage_infos['db'].value} database for summary fetching (from {offset} to {limit + offset}/{total_elements})."
+        )
         if stored_summaries := fetch_stored_articles_by_batch(
             storage_infos, offset=offset, limit=limit
         ):
@@ -94,16 +99,13 @@ def fetch_all_stored_articles(
     return all_articles
 
 
-TRANSPORT_SUMMARY_ENDPOINT = RetryTransport(retry=Retry(total=3, backoff_factor=0.5))
-
-
 def fetch_stored_articles_by_batch(
-    storage_infos: PMCStorageInfos, offset: int = 0, limit: int = MAX_ALLOWED_SUMMARY_RETRIEVAL
+    storage_infos: StorageInfos, offset: int = 0, limit: int = MAX_ALLOWED_SUMMARY_RETRIEVAL
 ) -> dict | None:
     """Fetch stored articles data requested in previous db query, starting from a specific offset to a given limit.
 
     Args:
-        storage_infos (PMCStorageInfos): Minimal infos needed to retrieve previously queried articles
+        storage_infos (StorageInfos): Minimal infos needed to retrieve previously queried articles
         offset (int): offset to start fetching the stored article infos
         limit (int): max number of article infos to fetch in one request.
 
@@ -112,7 +114,7 @@ def fetch_stored_articles_by_batch(
     """
 
     summary_params = {
-        "db": "pmc",
+        "db": storage_infos["db"].value,
         "query_key": storage_infos["query_key"],
         "WebEnv": storage_infos["web_env"],
         "retstart": offset,
@@ -128,41 +130,12 @@ def fetch_stored_articles_by_batch(
     return summary_data.get("result")
 
 
-def search_pmc(query: str) -> list[ArticleIds]:
-    """
-    Search PMC database for articles matching the given query.
-
-    Args:
-        query (str): Search query string
-
-    Returns:
-        list: List of dictionaries containing 'pmcid' and 'pmid' (when available)
-    """
-
-    try:
-        # Search for IDs matching the query
-        storage_infos: PMCStorageInfos = pmc_search_and_store(query)
-        if storage_infos is None or storage_infos["total_results"] == 0:
-            return []
-
-        result_set = fetch_all_stored_articles(storage_infos)
-
-        if not result_set:
-            return []
-        return extract_all_article_ids(result_set)
-
-    # TODO catch exception less broadly
-    except Exception:
-        # logger.exception in loguru is a ERROR level message and capture exception in message
-        logger.exception("Error processing PMC search")
-        return []
-
-
-def extract_all_article_ids(articles: dict) -> list[ArticleIds]:
+def extract_all_article_ids(articles: dict, db: NCBIDatabase) -> list[ArticleIds]:
     """Extract and format PubMed and PMC ids for a given article
 
     Args:
-        articles (dict): all articles data in PMC database. Has one key `uids` with list of uids (str) as value, other keys are `uid` with {article_data_dict} as value
+        db (NCBIDatabase): Database giving its ids. Format and naming differs from db to db.
+        articles (dict): all articles data in database. Has one key `uids` with list of uids (str) as value, other keys are `uid` with {article_data_dict} as value
 
     Returns:
         list of ArticleIds
@@ -175,20 +148,24 @@ def extract_all_article_ids(articles: dict) -> list[ArticleIds]:
             f"Uids as keys for result: {len(set(articles.keys()))}"
         )
 
+    extract_article_ids_method = {
+        NCBIDatabase.PUB_MED: extract_ids_from_pub_med_article,
+        NCBIDatabase.PMC: extract_ids_from_pcm_article,
+    }[db]
+
     results = []
     for uid, article_data in articles.items():
-        if article_result := extract_one_article_ids(uid, article_data):
+        if article_result := extract_article_ids_method(article_data):
             results.append(article_result)
 
     return results
 
 
-def extract_one_article_ids(uid: str, article_data: dict) -> ArticleIds:
-    """Extract and format PubMed and PMC ids for a given article
+def extract_ids_from_pcm_article(article_data: dict) -> ArticleIds:
+    """Extract and format PubMed and PMC ids for a given article in PCM database
 
     Args:
-        uid (str): PMC uid of the current article
-        article_data (dict): all data in PMC database re lated to the article
+        article_data (dict): all data in PMC database related to the article
 
     Returns:
         ArticleIds
@@ -196,7 +173,7 @@ def extract_one_article_ids(uid: str, article_data: dict) -> ArticleIds:
     Notes:
         {...
         'articleids': [
-            {'idtype': 'pmid', 'value': '36645057'},
+            {'idtype': 'pmid', 'value': '36645057'},  # PubMed
             {'idtype': 'doi', 'value': '10.1080/0886022X.2022.2162419'},
             {'idtype': 'pmcid', 'value': 'PMC9848274'}
         ]
@@ -204,34 +181,58 @@ def extract_one_article_ids(uid: str, article_data: dict) -> ArticleIds:
     """
 
     # Extract PMID if available
-    pmid = None
+    pmid, pmcid = None, None
     if "articleids" not in article_data:
         return {}
 
     for article_id in article_data["articleids"]:
         if article_id["idtype"] == "pmid" and article_id["value"] != "0":
             pmid = article_id["value"]
+        if article_id["idtype"] == "pmcid" and article_id["value"] != "0":
+            pmcid = article_id["value"]
+            if not str(pmcid).startswith("PMC"):
+                pmcid = f"PMC{pmcid}"
 
-    # Format PMCID
-    formatted_pmcid = uid
-    if not str(formatted_pmcid).startswith("PMC"):
-        formatted_pmcid = f"PMC{uid}"
+    if not pmcid and not pmid:
+        return {}
 
-    return ArticleIds(pmcid=formatted_pmcid, pmid=pmid)
+    return ArticleIds(pmcid=pmcid, pmid=pmid)
 
 
-def search_pubmed_pmc(query: str) -> list[ArticleIds]:
-    """
-    Search for articles matching the query and optional date range.
+def extract_ids_from_pub_med_article(article_data: dict) -> ArticleIds:
+    """Extract and format PubMed and PMC ids for a given article in PCM database
 
     Args:
-        query (str): Search query string
+        article_data (dict): all data in PMC database related to the article
 
     Returns:
-        list[ArticleIds]: List of dictionaries containing article information
-    """
-    # Currently only searches PMC - PubMed support needed (not implemented)
-    results = search_pmc(query)
+        ArticleIds
 
-    # Filter out entries with no identifiers
-    return [info for info in results if info["pmcid"] is not None or info["pmid"] is not None]
+    Notes:
+        {...
+        'articleids': [
+            {'idtype': 'pubmed', 'value': '36645057'},  # PubMed
+            {'idtype': 'doi', 'value': '10.1080/0886022X.2022.2162419'},
+            {'idtype': 'pmc', 'value': 'PMC9848274'}  # PMC
+            {'idtype': 'pmcid', 'idtypen': 5, 'value': 'pmc-id: PMC10189980;'}
+        ]
+        ...}
+    """
+
+    # Extract PMID if available
+    pmid, pmcid = None, None
+    if "articleids" not in article_data:
+        return {}
+
+    for article_id in article_data["articleids"]:
+        if article_id["idtype"] == "pubmed" and article_id["value"] != "0":
+            pmid = article_id["value"]
+        if article_id["idtype"] == "pmc" and article_id["value"] != "0":
+            pmcid = article_id["value"]
+            if not str(pmcid).startswith("PMC"):
+                pmcid = f"PMC{pmcid}"
+
+    if not pmcid and not pmid:
+        return {}
+
+    return ArticleIds(pmcid=pmcid, pmid=pmid)
