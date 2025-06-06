@@ -12,6 +12,7 @@ def create_e_queries(
     devices: Iterable[str],
     indicators: Iterable[str],
     year_bounds: tuple[int | None, int | None] = (None, None),
+    query_max_length: int = PMC_API_MAX_URI_LENGTH,
 ) -> tuple[str, ...]:
     """
     Create all search queries combining hemostatic devices and urology indicators, limited by endpoint URI length allowed.
@@ -32,7 +33,7 @@ def create_e_queries(
     queries = create_complete_combinations_queries(
         devices,
         indicators,
-        query_max_length=PMC_API_MAX_URI_LENGTH,
+        query_max_length=query_max_length,
     )
 
     if year_bound_query != "":

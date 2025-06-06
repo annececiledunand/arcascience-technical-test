@@ -5,6 +5,7 @@ from src.eutils_retrieval.query import (
     create_complete_combinations_queries,
     biggest_nb_words_possible,
     create_year_bound_query,
+    create_e_queries,
 )
 
 TEST_DEVICES = [
@@ -14,6 +15,26 @@ TEST_DEVICES = [
     "Gelatin sponge",
 ]
 TEST_INDICATORS = ["Urology Indicators", "urological surgery", "vascular surgery"]
+
+
+def test_create_e_queries():
+    result = create_e_queries(["a", "b", "c"], ["1", "2", "3"], (2023, 2024), 39)
+    assert list(result) == [
+        '(("a" OR "b") AND ("1" OR "2")) AND 2023[PDAT]:2024[PDAT]',
+        '(("a" OR "b") AND ("3")) AND 2023[PDAT]:2024[PDAT]',
+        '(("c") AND ("1" OR "2")) AND 2023[PDAT]:2024[PDAT]',
+        '(("c") AND ("3")) AND 2023[PDAT]:2024[PDAT]',
+    ]
+
+
+def test_create_e_queries_no_bound():
+    result = create_e_queries(["a", "b", "c"], ["1", "2", "3"], (None, None), 39)
+    assert list(result) == [
+        '("a" OR "b") AND ("1" OR "2")',
+        '("a" OR "b") AND ("3")',
+        '("c") AND ("1" OR "2")',
+        '("c") AND ("3")',
+    ]
 
 
 @pytest.mark.parametrize(
