@@ -105,8 +105,12 @@ Logs and tqdm progress bars are difficult to merge, `rich` lib can be more appro
 - Added flag `--mini` to run the script with the starting sample selection for testing purposes (deactivated by default)
 
 
-## Notes
+## Notes on development
+
+I started by cleaning and reorganising the code, then adding tests to current methods and features, i order to add new ones that would preserve the correct behaviour.
+I find it easier on the mind to be able to trust that any breaking change would be caught by the test suite. Each addition was made via PRs in separate branches for each feature, so the CI test and linter was added very early. 
 
 For error handling, I removed all of the `try, except` with a too broad clause. In general, I prefer the code to break as early and cleanly as possible,
-and that allows for debugging in a much safer and faster way. I raised exceptions each time the code could not continue 
-**with those simple features** and would have needed proper error-handling days of implementations. 
+and that allows for debugging in a much safer and faster way. Here, I raised exceptions each time the code could not continue 
+**within those simple features parameters** and would have needed proper error-handling days of implementations. In production environment, constraints on how and when the code should fail would be a better guide on how to handle errors. 
+Should the code handle half the articles or retrieve all ? Where to store the results of the non-downloadable articles and at which step was it broken ?  
