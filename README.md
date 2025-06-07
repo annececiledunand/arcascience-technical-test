@@ -4,9 +4,16 @@ See [test instruction](./INSTRUCTIONS.md)
 
 ## Getting Started
 
+You need to [install `uv`](https://docs.astral.sh/uv/getting-started/installation/)
+
 1. Install project dependencies:
    ```
+   git clone git@github.com:annececiledunand/arcascience-technical-test.git YOUR_FOLDER
+   uv venv
+   . .venv/bin/activate
    uv sync --locked
+   # check virtual env with
+   which python
    ```
 
 2. Run tests
