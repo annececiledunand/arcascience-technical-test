@@ -89,7 +89,8 @@ def call_eutils(
 ) -> dict | list:
     """Make HTTP call to NCBI E-utilities endpoints, handles error and retry."""
     retry_transport = RetryTransport(retry=Retry(total=retry, backoff_factor=0.5))
-    with httpx.Client(transport=retry_transport) as client:
+    timeout = httpx.Timeout(10.0, read=None)
+    with httpx.Client(transport=retry_transport, timeout=timeout) as client:
         response = client.get(endpoint.full_url(), params=endpoint.validated_params(params))
 
     if response.status_code == HTTPStatus.REQUEST_URI_TOO_LONG:

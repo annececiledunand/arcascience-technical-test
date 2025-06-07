@@ -1,0 +1,301 @@
+2025-06-07 16:25:38.383 | INFO     | src.eutils_retrieval.query:create_e_queries:33 - Determining the number of queries necessary to describe all devices and indicators
+2025-06-07 16:25:38.383 | INFO     | src.cross_database_search:ncbi_search_and_fetch:47 - Will run 6 queries on ('pubmed', 'pmc')
+2025-06-07 16:25:38.383 | INFO     | src.utils:wrapper:38 - (1/6) Starting PubMed and PMC databases cross-search
+2025-06-07 16:25:38.383 | INFO     | src.utils:wrapper:38 - Starting PMC database search and fetch
+2025-06-07 16:25:38.383 | DEBUG    | src.eutils_retrieval.search:search_and_store:55 - Calling pmc database for search and store.
+2025-06-07 16:25:39.004 | DEBUG    | src.eutils_retrieval.search:search_and_store:63 - Found 50030 results in pmc. Storing them for future querying
+2025-06-07 16:25:39.004 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 0 to 500/50030).
+2025-06-07 16:25:40.699 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 500 to 1000/50030).
+2025-06-07 16:25:42.407 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 1000 to 1500/50030).
+2025-06-07 16:25:44.901 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 1500 to 2000/50030).
+2025-06-07 16:25:46.366 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 2000 to 2500/50030).
+2025-06-07 16:25:48.174 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 2500 to 3000/50030).
+2025-06-07 16:25:49.899 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 3000 to 3500/50030).
+2025-06-07 16:25:51.582 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 3500 to 4000/50030).
+2025-06-07 16:25:53.296 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 4000 to 4500/50030).
+2025-06-07 16:25:54.759 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 4500 to 5000/50030).
+2025-06-07 16:25:56.248 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 5000 to 5500/50030).
+2025-06-07 16:25:57.899 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 5500 to 6000/50030).
+2025-06-07 16:25:59.370 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 6000 to 6500/50030).
+2025-06-07 16:26:00.869 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 6500 to 7000/50030).
+2025-06-07 16:26:02.364 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 7000 to 7500/50030).
+2025-06-07 16:26:04.076 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 7500 to 8000/50030).
+2025-06-07 16:26:05.530 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 8000 to 8500/50030).
+2025-06-07 16:26:07.378 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 8500 to 9000/50030).
+2025-06-07 16:26:09.091 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 9000 to 9500/50030).
+2025-06-07 16:26:11.059 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 9500 to 10000/50030).
+2025-06-07 16:26:12.601 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 10000 to 10500/50030).
+2025-06-07 16:26:14.229 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 10500 to 11000/50030).
+2025-06-07 16:26:15.701 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 11000 to 11500/50030).
+2025-06-07 16:26:17.114 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 11500 to 12000/50030).
+2025-06-07 16:26:18.552 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 12000 to 12500/50030).
+2025-06-07 16:26:20.071 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 12500 to 13000/50030).
+2025-06-07 16:26:21.796 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 13000 to 13500/50030).
+2025-06-07 16:26:23.433 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 13500 to 14000/50030).
+2025-06-07 16:26:24.890 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 14000 to 14500/50030).
+2025-06-07 16:26:26.355 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 14500 to 15000/50030).
+2025-06-07 16:26:27.826 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 15000 to 15500/50030).
+2025-06-07 16:26:29.530 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 15500 to 16000/50030).
+2025-06-07 16:26:31.155 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 16000 to 16500/50030).
+2025-06-07 16:26:32.799 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 16500 to 17000/50030).
+2025-06-07 16:26:34.548 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 17000 to 17500/50030).
+2025-06-07 16:26:36.183 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 17500 to 18000/50030).
+2025-06-07 16:26:37.700 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 18000 to 18500/50030).
+2025-06-07 16:26:39.402 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 18500 to 19000/50030).
+2025-06-07 16:26:41.068 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 19000 to 19500/50030).
+2025-06-07 16:26:42.602 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 19500 to 20000/50030).
+2025-06-07 16:26:44.365 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 20000 to 20500/50030).
+2025-06-07 16:26:45.848 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 20500 to 21000/50030).
+2025-06-07 16:26:47.355 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 21000 to 21500/50030).
+2025-06-07 16:26:48.879 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 21500 to 22000/50030).
+2025-06-07 16:26:50.778 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 22000 to 22500/50030).
+2025-06-07 16:26:52.561 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 22500 to 23000/50030).
+2025-06-07 16:26:54.317 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 23000 to 23500/50030).
+2025-06-07 16:26:56.115 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 23500 to 24000/50030).
+2025-06-07 16:26:57.834 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 24000 to 24500/50030).
+2025-06-07 16:26:59.508 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 24500 to 25000/50030).
+2025-06-07 16:27:01.289 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 25000 to 25500/50030).
+2025-06-07 16:27:03.017 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 25500 to 26000/50030).
+2025-06-07 16:27:04.724 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 26000 to 26500/50030).
+2025-06-07 16:27:06.464 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 26500 to 27000/50030).
+2025-06-07 16:27:08.091 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 27000 to 27500/50030).
+2025-06-07 16:27:09.723 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 27500 to 28000/50030).
+2025-06-07 16:27:11.193 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 28000 to 28500/50030).
+2025-06-07 16:27:12.643 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 28500 to 29000/50030).
+2025-06-07 16:27:14.456 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 29000 to 29500/50030).
+2025-06-07 16:27:15.825 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 29500 to 30000/50030).
+2025-06-07 16:27:17.567 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 30000 to 30500/50030).
+2025-06-07 16:27:19.324 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 30500 to 31000/50030).
+2025-06-07 16:27:20.854 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 31000 to 31500/50030).
+2025-06-07 16:27:22.335 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 31500 to 32000/50030).
+2025-06-07 16:27:23.829 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 32000 to 32500/50030).
+2025-06-07 16:27:25.497 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 32500 to 33000/50030).
+2025-06-07 16:27:27.159 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 33000 to 33500/50030).
+2025-06-07 16:27:28.645 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 33500 to 34000/50030).
+2025-06-07 16:27:30.334 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 34000 to 34500/50030).
+2025-06-07 16:27:31.844 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 34500 to 35000/50030).
+2025-06-07 16:27:33.288 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 35000 to 35500/50030).
+2025-06-07 16:27:34.947 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 35500 to 36000/50030).
+2025-06-07 16:27:36.457 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 36000 to 36500/50030).
+2025-06-07 16:27:38.098 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 36500 to 37000/50030).
+2025-06-07 16:27:39.618 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 37000 to 37500/50030).
+2025-06-07 16:27:41.080 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 37500 to 38000/50030).
+2025-06-07 16:27:42.785 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 38000 to 38500/50030).
+2025-06-07 16:27:44.234 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 38500 to 39000/50030).
+2025-06-07 16:27:45.750 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 39000 to 39500/50030).
+2025-06-07 16:27:47.670 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 39500 to 40000/50030).
+2025-06-07 16:27:49.135 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 40000 to 40500/50030).
+2025-06-07 16:27:50.604 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 40500 to 41000/50030).
+2025-06-07 16:27:52.350 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 41000 to 41500/50030).
+2025-06-07 16:27:53.825 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 41500 to 42000/50030).
+2025-06-07 16:27:55.339 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 42000 to 42500/50030).
+2025-06-07 16:27:57.049 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 42500 to 43000/50030).
+2025-06-07 16:27:58.545 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 43000 to 43500/50030).
+2025-06-07 16:28:00.013 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 43500 to 44000/50030).
+2025-06-07 16:28:01.692 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 44000 to 44500/50030).
+2025-06-07 16:28:03.421 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 44500 to 45000/50030).
+2025-06-07 16:28:04.888 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 45000 to 45500/50030).
+2025-06-07 16:28:06.569 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 45500 to 46000/50030).
+2025-06-07 16:28:08.382 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 46000 to 46500/50030).
+2025-06-07 16:28:10.130 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 46500 to 47000/50030).
+2025-06-07 16:28:11.729 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 47000 to 47500/50030).
+2025-06-07 16:28:13.362 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 47500 to 48000/50030).
+2025-06-07 16:28:15.330 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 48000 to 48500/50030).
+2025-06-07 16:28:16.994 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 48500 to 49000/50030).
+2025-06-07 16:28:18.677 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 49000 to 49500/50030).
+2025-06-07 16:28:20.546 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 49500 to 50000/50030).
+2025-06-07 16:28:22.142 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 50000 to 50500/50030).
+2025-06-07 16:28:22.940 | INFO     | src.cross_database_search:pmc_search_and_fetch:172 - Found 50030 articles in PMC
+2025-06-07 16:28:22.963 | INFO     | src.utils:wrapper:40 - Finished PMC database search and fetch, took 164.57959747314453 seconds
+2025-06-07 16:28:22.963 | INFO     | src.utils:wrapper:38 - Starting PubMed database search adn fetch
+2025-06-07 16:28:22.963 | DEBUG    | src.eutils_retrieval.search:search_and_store:55 - Calling pubmed database for search and store.
+2025-06-07 16:28:23.741 | DEBUG    | src.eutils_retrieval.search:search_and_store:63 - Found 1616 results in pubmed. Storing them for future querying
+2025-06-07 16:28:23.741 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pubmed database for summary fetching (from 0 to 500/1616).
+2025-06-07 16:28:30.267 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pubmed database for summary fetching (from 500 to 1000/1616).
+2025-06-07 16:28:36.252 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pubmed database for summary fetching (from 1000 to 1500/1616).
+2025-06-07 16:28:42.331 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pubmed database for summary fetching (from 1500 to 2000/1616).
+2025-06-07 16:28:43.902 | INFO     | src.cross_database_search:pub_med_search_and_fetch:239 - Found 1616 articles in PubMed
+2025-06-07 16:28:43.904 | INFO     | src.utils:wrapper:40 - Finished PubMed database search adn fetch, took 20.9411199092865 seconds
+2025-06-07 16:28:43.904 | INFO     | src.utils:wrapper:40 - (1/6) Finished PubMed and PMC databases cross-search, took 185.52136325836182 seconds
+2025-06-07 16:28:43.905 | INFO     | src.utils:wrapper:38 - (2/6) Starting PubMed and PMC databases cross-search
+2025-06-07 16:28:43.905 | INFO     | src.utils:wrapper:38 - Starting PMC database search and fetch
+2025-06-07 16:28:43.905 | DEBUG    | src.eutils_retrieval.search:search_and_store:55 - Calling pmc database for search and store.
+2025-06-07 16:28:45.046 | DEBUG    | src.eutils_retrieval.search:search_and_store:63 - Found 8225 results in pmc. Storing them for future querying
+2025-06-07 16:28:45.046 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 0 to 500/8225).
+2025-06-07 16:28:46.480 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 500 to 1000/8225).
+2025-06-07 16:28:47.985 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 1000 to 1500/8225).
+2025-06-07 16:28:49.401 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 1500 to 2000/8225).
+2025-06-07 16:28:50.839 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 2000 to 2500/8225).
+2025-06-07 16:28:52.552 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 2500 to 3000/8225).
+2025-06-07 16:28:54.107 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 3000 to 3500/8225).
+2025-06-07 16:28:55.519 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 3500 to 4000/8225).
+2025-06-07 16:28:57.062 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 4000 to 4500/8225).
+2025-06-07 16:28:58.441 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 4500 to 5000/8225).
+2025-06-07 16:29:00.113 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 5000 to 5500/8225).
+2025-06-07 16:29:01.511 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 5500 to 6000/8225).
+2025-06-07 16:29:02.908 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 6000 to 6500/8225).
+2025-06-07 16:29:04.504 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 6500 to 7000/8225).
+2025-06-07 16:29:05.909 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 7000 to 7500/8225).
+2025-06-07 16:29:07.412 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 7500 to 8000/8225).
+2025-06-07 16:29:08.825 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 8000 to 8500/8225).
+2025-06-07 16:29:09.805 | INFO     | src.cross_database_search:pmc_search_and_fetch:172 - Found 8225 articles in PMC
+2025-06-07 16:29:09.810 | INFO     | src.utils:wrapper:40 - Finished PMC database search and fetch, took 25.905364513397217 seconds
+2025-06-07 16:29:09.810 | INFO     | src.utils:wrapper:38 - Starting PubMed database search adn fetch
+2025-06-07 16:29:09.810 | DEBUG    | src.eutils_retrieval.search:search_and_store:55 - Calling pubmed database for search and store.
+2025-06-07 16:29:10.663 | DEBUG    | src.eutils_retrieval.search:search_and_store:63 - Found 296 results in pubmed. Storing them for future querying
+2025-06-07 16:29:10.664 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pubmed database for summary fetching (from 0 to 296/296).
+2025-06-07 16:29:14.683 | INFO     | src.cross_database_search:pub_med_search_and_fetch:239 - Found 296 articles in PubMed
+2025-06-07 16:29:14.683 | INFO     | src.utils:wrapper:40 - Finished PubMed database search adn fetch, took 4.87293004989624 seconds
+2025-06-07 16:29:14.683 | INFO     | src.utils:wrapper:40 - (2/6) Finished PubMed and PMC databases cross-search, took 30.778488874435425 seconds
+2025-06-07 16:29:14.683 | INFO     | src.utils:wrapper:38 - (3/6) Starting PubMed and PMC databases cross-search
+2025-06-07 16:29:14.683 | INFO     | src.utils:wrapper:38 - Starting PMC database search and fetch
+2025-06-07 16:29:14.683 | DEBUG    | src.eutils_retrieval.search:search_and_store:55 - Calling pmc database for search and store.
+2025-06-07 16:29:15.201 | DEBUG    | src.eutils_retrieval.search:search_and_store:63 - Found 4645 results in pmc. Storing them for future querying
+2025-06-07 16:29:15.202 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 0 to 500/4645).
+2025-06-07 16:29:16.943 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 500 to 1000/4645).
+2025-06-07 16:29:18.619 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 1000 to 1500/4645).
+2025-06-07 16:29:19.980 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 1500 to 2000/4645).
+2025-06-07 16:29:21.367 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 2000 to 2500/4645).
+2025-06-07 16:29:22.953 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 2500 to 3000/4645).
+2025-06-07 16:29:24.595 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 3000 to 3500/4645).
+2025-06-07 16:29:25.995 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 3500 to 4000/4645).
+2025-06-07 16:29:27.718 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 4000 to 4500/4645).
+2025-06-07 16:29:29.069 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 4500 to 5000/4645).
+2025-06-07 16:29:29.885 | INFO     | src.cross_database_search:pmc_search_and_fetch:172 - Found 4645 articles in PMC
+2025-06-07 16:29:29.887 | INFO     | src.utils:wrapper:40 - Finished PMC database search and fetch, took 15.204018592834473 seconds
+2025-06-07 16:29:29.887 | INFO     | src.utils:wrapper:38 - Starting PubMed database search adn fetch
+2025-06-07 16:29:29.888 | DEBUG    | src.eutils_retrieval.search:search_and_store:55 - Calling pubmed database for search and store.
+2025-06-07 16:29:30.566 | DEBUG    | src.eutils_retrieval.search:search_and_store:63 - Found 154 results in pubmed. Storing them for future querying
+2025-06-07 16:29:30.567 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pubmed database for summary fetching (from 0 to 154/154).
+2025-06-07 16:29:33.022 | INFO     | src.cross_database_search:pub_med_search_and_fetch:239 - Found 154 articles in PubMed
+2025-06-07 16:29:33.023 | INFO     | src.utils:wrapper:40 - Finished PubMed database search adn fetch, took 3.13567852973938 seconds
+2025-06-07 16:29:33.023 | INFO     | src.utils:wrapper:40 - (3/6) Finished PubMed and PMC databases cross-search, took 18.340100288391113 seconds
+2025-06-07 16:29:33.024 | INFO     | src.utils:wrapper:38 - (4/6) Starting PubMed and PMC databases cross-search
+2025-06-07 16:29:33.024 | INFO     | src.utils:wrapper:38 - Starting PMC database search and fetch
+2025-06-07 16:29:33.024 | DEBUG    | src.eutils_retrieval.search:search_and_store:55 - Calling pmc database for search and store.
+2025-06-07 16:29:33.589 | DEBUG    | src.eutils_retrieval.search:search_and_store:63 - Found 31247 results in pmc. Storing them for future querying
+2025-06-07 16:29:33.590 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 0 to 500/31247).
+2025-06-07 16:29:35.040 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 500 to 1000/31247).
+2025-06-07 16:29:36.694 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 1000 to 1500/31247).
+2025-06-07 16:29:38.096 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 1500 to 2000/31247).
+2025-06-07 16:29:39.774 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 2000 to 2500/31247).
+2025-06-07 16:29:41.175 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 2500 to 3000/31247).
+2025-06-07 16:29:42.743 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 3000 to 3500/31247).
+2025-06-07 16:29:44.429 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 3500 to 4000/31247).
+2025-06-07 16:29:45.992 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 4000 to 4500/31247).
+2025-06-07 16:29:47.653 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 4500 to 5000/31247).
+2025-06-07 16:29:49.147 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 5000 to 5500/31247).
+2025-06-07 16:29:50.595 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 5500 to 6000/31247).
+2025-06-07 16:29:52.024 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 6000 to 6500/31247).
+2025-06-07 16:29:53.803 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 6500 to 7000/31247).
+2025-06-07 16:29:55.598 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 7000 to 7500/31247).
+2025-06-07 16:29:57.037 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 7500 to 8000/31247).
+2025-06-07 16:29:58.511 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 8000 to 8500/31247).
+2025-06-07 16:29:59.939 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 8500 to 9000/31247).
+2025-06-07 16:30:01.424 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 9000 to 9500/31247).
+2025-06-07 16:30:03.197 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 9500 to 10000/31247).
+2025-06-07 16:30:04.961 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 10000 to 10500/31247).
+2025-06-07 16:30:06.632 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 10500 to 11000/31247).
+2025-06-07 16:30:08.395 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 11000 to 11500/31247).
+2025-06-07 16:30:09.819 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 11500 to 12000/31247).
+2025-06-07 16:30:11.282 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 12000 to 12500/31247).
+2025-06-07 16:30:12.903 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 12500 to 13000/31247).
+2025-06-07 16:30:14.365 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 13000 to 13500/31247).
+2025-06-07 16:30:15.759 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 13500 to 14000/31247).
+2025-06-07 16:30:17.360 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 14000 to 14500/31247).
+2025-06-07 16:30:18.794 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 14500 to 15000/31247).
+2025-06-07 16:30:20.202 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 15000 to 15500/31247).
+2025-06-07 16:30:22.037 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 15500 to 16000/31247).
+2025-06-07 16:30:23.646 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 16000 to 16500/31247).
+2025-06-07 16:30:25.171 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 16500 to 17000/31247).
+2025-06-07 16:30:26.700 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 17000 to 17500/31247).
+2025-06-07 16:30:28.173 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 17500 to 18000/31247).
+2025-06-07 16:30:29.893 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 18000 to 18500/31247).
+2025-06-07 16:30:31.319 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 18500 to 19000/31247).
+2025-06-07 16:30:33.001 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 19000 to 19500/31247).
+2025-06-07 16:30:34.419 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 19500 to 20000/31247).
+2025-06-07 16:30:36.152 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 20000 to 20500/31247).
+2025-06-07 16:30:37.596 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 20500 to 21000/31247).
+2025-06-07 16:30:38.991 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 21000 to 21500/31247).
+2025-06-07 16:30:40.398 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 21500 to 22000/31247).
+2025-06-07 16:30:42.116 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 22000 to 22500/31247).
+2025-06-07 16:30:43.714 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 22500 to 23000/31247).
+2025-06-07 16:30:45.285 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 23000 to 23500/31247).
+2025-06-07 16:30:46.696 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 23500 to 24000/31247).
+2025-06-07 16:30:48.449 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 24000 to 24500/31247).
+2025-06-07 16:30:49.840 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 24500 to 25000/31247).
+2025-06-07 16:30:51.799 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 25000 to 25500/31247).
+2025-06-07 16:30:53.226 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 25500 to 26000/31247).
+2025-06-07 16:30:54.845 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 26000 to 26500/31247).
+2025-06-07 16:30:56.658 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 26500 to 27000/31247).
+2025-06-07 16:30:58.036 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 27000 to 27500/31247).
+2025-06-07 16:30:59.444 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 27500 to 28000/31247).
+2025-06-07 16:31:01.130 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 28000 to 28500/31247).
+2025-06-07 16:31:02.537 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 28500 to 29000/31247).
+2025-06-07 16:31:03.954 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 29000 to 29500/31247).
+2025-06-07 16:31:05.631 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 29500 to 30000/31247).
+2025-06-07 16:31:07.015 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 30000 to 30500/31247).
+2025-06-07 16:31:08.439 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 30500 to 31000/31247).
+2025-06-07 16:31:10.073 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 31000 to 31500/31247).
+2025-06-07 16:31:11.249 | INFO     | src.cross_database_search:pmc_search_and_fetch:172 - Found 31247 articles in PMC
+2025-06-07 16:31:11.272 | INFO     | src.utils:wrapper:40 - Finished PMC database search and fetch, took 98.2477822303772 seconds
+2025-06-07 16:31:11.272 | INFO     | src.utils:wrapper:38 - Starting PubMed database search adn fetch
+2025-06-07 16:31:11.272 | DEBUG    | src.eutils_retrieval.search:search_and_store:55 - Calling pubmed database for search and store.
+2025-06-07 16:31:11.943 | DEBUG    | src.eutils_retrieval.search:search_and_store:63 - Found 1726 results in pubmed. Storing them for future querying
+2025-06-07 16:31:11.943 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pubmed database for summary fetching (from 0 to 500/1726).
+2025-06-07 16:31:18.316 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pubmed database for summary fetching (from 500 to 1000/1726).
+2025-06-07 16:31:25.402 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pubmed database for summary fetching (from 1000 to 1500/1726).
+2025-06-07 16:31:32.624 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pubmed database for summary fetching (from 1500 to 2000/1726).
+2025-06-07 16:31:35.255 | INFO     | src.cross_database_search:pub_med_search_and_fetch:239 - Found 1726 articles in PubMed
+2025-06-07 16:31:35.257 | INFO     | src.utils:wrapper:40 - Finished PubMed database search adn fetch, took 23.985723733901978 seconds
+2025-06-07 16:31:35.258 | INFO     | src.utils:wrapper:40 - (4/6) Finished PubMed and PMC databases cross-search, took 122.23398184776306 seconds
+2025-06-07 16:31:35.258 | INFO     | src.utils:wrapper:38 - (5/6) Starting PubMed and PMC databases cross-search
+2025-06-07 16:31:35.258 | INFO     | src.utils:wrapper:38 - Starting PMC database search and fetch
+2025-06-07 16:31:35.258 | DEBUG    | src.eutils_retrieval.search:search_and_store:55 - Calling pmc database for search and store.
+2025-06-07 16:31:35.752 | DEBUG    | src.eutils_retrieval.search:search_and_store:63 - Found 4540 results in pmc. Storing them for future querying
+2025-06-07 16:31:35.752 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 0 to 500/4540).
+2025-06-07 16:31:37.415 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 500 to 1000/4540).
+2025-06-07 16:31:38.882 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 1000 to 1500/4540).
+2025-06-07 16:31:40.264 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 1500 to 2000/4540).
+2025-06-07 16:31:41.625 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 2000 to 2500/4540).
+2025-06-07 16:31:42.979 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 2500 to 3000/4540).
+2025-06-07 16:31:44.525 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 3000 to 3500/4540).
+2025-06-07 16:31:46.071 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 3500 to 4000/4540).
+2025-06-07 16:31:47.614 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 4000 to 4500/4540).
+2025-06-07 16:31:49.179 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 4500 to 5000/4540).
+2025-06-07 16:31:49.801 | INFO     | src.cross_database_search:pmc_search_and_fetch:172 - Found 4540 articles in PMC
+2025-06-07 16:31:49.804 | INFO     | src.utils:wrapper:40 - Finished PMC database search and fetch, took 14.546457529067993 seconds
+2025-06-07 16:31:49.804 | INFO     | src.utils:wrapper:38 - Starting PubMed database search adn fetch
+2025-06-07 16:31:49.804 | DEBUG    | src.eutils_retrieval.search:search_and_store:55 - Calling pubmed database for search and store.
+2025-06-07 16:31:50.564 | DEBUG    | src.eutils_retrieval.search:search_and_store:63 - Found 192 results in pubmed. Storing them for future querying
+2025-06-07 16:31:50.564 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pubmed database for summary fetching (from 0 to 192/192).
+2025-06-07 16:31:53.194 | INFO     | src.cross_database_search:pub_med_search_and_fetch:239 - Found 192 articles in PubMed
+2025-06-07 16:31:53.194 | INFO     | src.utils:wrapper:40 - Finished PubMed database search adn fetch, took 3.3899898529052734 seconds
+2025-06-07 16:31:53.195 | INFO     | src.utils:wrapper:40 - (5/6) Finished PubMed and PMC databases cross-search, took 17.93659543991089 seconds
+2025-06-07 16:31:53.195 | INFO     | src.utils:wrapper:38 - (6/6) Starting PubMed and PMC databases cross-search
+2025-06-07 16:31:53.195 | INFO     | src.utils:wrapper:38 - Starting PMC database search and fetch
+2025-06-07 16:31:53.195 | DEBUG    | src.eutils_retrieval.search:search_and_store:55 - Calling pmc database for search and store.
+2025-06-07 16:31:53.649 | DEBUG    | src.eutils_retrieval.search:search_and_store:63 - Found 2706 results in pmc. Storing them for future querying
+2025-06-07 16:31:53.649 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 0 to 500/2706).
+2025-06-07 16:31:55.040 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 500 to 1000/2706).
+2025-06-07 16:31:56.579 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 1000 to 1500/2706).
+2025-06-07 16:31:57.890 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 1500 to 2000/2706).
+2025-06-07 16:31:59.494 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 2000 to 2500/2706).
+2025-06-07 16:32:00.856 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pmc database for summary fetching (from 2500 to 3000/2706).
+2025-06-07 16:32:01.680 | INFO     | src.cross_database_search:pmc_search_and_fetch:172 - Found 2706 articles in PMC
+2025-06-07 16:32:01.682 | INFO     | src.utils:wrapper:40 - Finished PMC database search and fetch, took 8.48693561553955 seconds
+2025-06-07 16:32:01.682 | INFO     | src.utils:wrapper:38 - Starting PubMed database search adn fetch
+2025-06-07 16:32:01.682 | DEBUG    | src.eutils_retrieval.search:search_and_store:55 - Calling pubmed database for search and store.
+2025-06-07 16:32:02.231 | DEBUG    | src.eutils_retrieval.search:search_and_store:63 - Found 140 results in pubmed. Storing them for future querying
+2025-06-07 16:32:02.232 | DEBUG    | src.eutils_retrieval.search:fetch_all_stored_articles:136 - Calling pubmed database for summary fetching (from 0 to 140/140).
+2025-06-07 16:32:03.997 | INFO     | src.cross_database_search:pub_med_search_and_fetch:239 - Found 140 articles in PubMed
+2025-06-07 16:32:03.998 | INFO     | src.utils:wrapper:40 - Finished PubMed database search adn fetch, took 2.3159663677215576 seconds
+2025-06-07 16:32:03.998 | INFO     | src.utils:wrapper:40 - (6/6) Finished PubMed and PMC databases cross-search, took 10.803213119506836 seconds
+2025-06-07 16:32:03.998 | INFO     | src.utils:wrapper:38 - Starting Merging and de-duplicating article ids from multiple sources
+2025-06-07 16:32:04.062 | DEBUG    | src.cross_database_search:merge_article_ids:320 - Deduplication moved nb of articles from 105517 to 77887
+2025-06-07 16:32:04.082 | INFO     | src.utils:wrapper:40 - Finished Merging and de-duplicating article ids from multiple sources, took 0.08406901359558105 seconds
+2025-06-07 16:32:04.089 | INFO     | src.utils:wrapper:38 - Starting Merging and de-duplicating article ids from multiple sources
+2025-06-07 16:32:04.129 | DEBUG    | src.cross_database_search:merge_article_ids:326 - No duplication detected.
+2025-06-07 16:32:04.131 | INFO     | src.utils:wrapper:40 - Finished Merging and de-duplicating article ids from multiple sources, took 0.042131900787353516 seconds
+2025-06-07 16:32:04.131 | SUCCESS  | src.retrieval:ncbi_article_retrieval:59 - Found 77887 total results, took 385.74829363822937 seconds
+2025-06-07 16:32:04.131 | DEBUG    | src.utils:store_data_as_json:62 - Writing data into /home/golentale/code/arcascience-technical-test/submission_results/retrieved_ids.json

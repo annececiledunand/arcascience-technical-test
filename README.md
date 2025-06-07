@@ -23,6 +23,7 @@ See [test instruction](./INSTRUCTIONS.md)
    
 ## Repository structure
 
+- [submission_results/](./submission_results) : folder with 2 runs, one with parallel runs (async), one without, with all devices and indicators, from year 2020 to 2025, on both pub_med and pmc dbs, with ids and log file.
 - [pyproject.toml](./pyproject.toml) : defines the entire project configuration
 - [main.py](./main.py) : the CLI entrypoint, runs the entire project
 - [src/](./src)
@@ -73,6 +74,37 @@ See [src/eutils_retrieval/search.py](./src/eutils_retrieval/search.py) and metho
 Used lib multiprocess to split and parallelize the maximum of api calls, and using the `backoff` parameter of api call retries to wait more each failed call. 
 In documentation, we are told the server can only allow 3 requests by the second (if no APIKey is possessed by the project, which is the case here) [here](https://www.ncbi.nlm.nih.gov/books/NBK25497/#chapter2.Usage_Guidelines_and_Requiremen)
 
+I did not merge the results into the `main` branch, to be able to compare both `sync` and `async` behaviours. All is in branch `async-multiprocessing`.
+
+On branch `async-multiprocessing` I deduplicated the methods that uses api calls to be able to test with or without it, via a flag system.
+Just add the flag `--with-async` when running a method using multiprocessing.
+
+For 3 concurrent calls (fixed number due to documentation, maybe with a better system of semaphore we can deal with seconds concurrency and better backoff)
+
+MINI devices and indicators - 2023-2025 - PMC db only
+```
+uv run main.py --mini --db-name pmc --start-year 2023 --end-year 2025
+Found 517 total results, took 2.4062864780426025 seconds
+uv run main.py --mini --db-name pmc --start-year 2023 --end-year 2025 --with-async
+Found 517 total results, took 2.190678358078003 seconds
+```
+
+ALL devices and indicators - 2023-2025 - PMC db only
+```
+uv run main.py --db-name pmc --start-year 2023 --end-year 2025 --with-async
+Found 32680 total results, took 71.69751620292664 seconds
+uv run main.py --db-name pmc --start-year 2023 --end-year 2025
+Found 32680 total results, took 134.04387497901917 seconds
+```
+
+ALL devices and indicators - 2020-2025 - PMC and PubMed db
+
+```
+uv run main.py --db-name all --start-year 2020 --end-year 2025 --with-async
+Found 77887 total results, took 187.8852298259735 seconds
+uv run main.py --db-name all --start-year 2020 --end-year 2025
+Found 77887 total results, took 385.74829363822937 seconds```
+```
 
 ### 2.4 Retry logic for HTTP calls
 
@@ -113,4 +145,6 @@ I find it easier on the mind to be able to trust that any breaking change would 
 For error handling, I removed all of the `try, except` with a too broad clause. In general, I prefer the code to break as early and cleanly as possible,
 and that allows for debugging in a much safer and faster way. Here, I raised exceptions each time the code could not continue 
 **within those simple features parameters** and would have needed proper error-handling days of implementations. In production environment, constraints on how and when the code should fail would be a better guide on how to handle errors. 
-Should the code handle half the articles or retrieve all ? Where to store the results of the non-downloadable articles and at which step was it broken ?  
+Should the code handle half the articles or retrieve all ? Where to store the results of the non-downloadable articles and at which step was it broken ?
+
+Tested on single dbs and both dbs, from 2020 to 2025.
