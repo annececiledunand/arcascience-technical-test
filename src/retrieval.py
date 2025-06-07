@@ -3,7 +3,11 @@ from pathlib import Path
 
 from loguru import logger
 
-from src.cross_database_search import merge_article_ids, ncbi_search_and_fetch
+from src.cross_database_search import (
+    merge_article_ids,
+    ncbi_search_and_fetch,
+    ncbi_search_and_fetch_async,
+)
 from src.eutils_retrieval.api import NCBIDatabase
 from src.eutils_retrieval.query import create_e_queries
 from src.utils import store_data_as_json
@@ -17,6 +21,7 @@ def ncbi_article_retrieval(
     db: tuple[NCBIDatabase, ...] | NCBIDatabase,
     output_folder: Path,
     store_intermediate_results: bool = False,
+    with_async: bool = False,
 ) -> None:
     """Retrieve article ids from NCBI Databases.
 
@@ -31,6 +36,9 @@ def ncbi_article_retrieval(
             Can be given to store intermediate findings for each query.
         store_intermediate_results (bool):
             Store intermediate findings for each query and db into output folder sub folder.
+        with_async (bool):
+            Using multiprocessing via async methods, or regular sync methods for api calls.
+            For performance tests only.
 
     """
     start = time.time()
@@ -46,7 +54,10 @@ def ncbi_article_retrieval(
         intermediate_folder = output_folder / "intermediate_results"
         intermediate_folder.mkdir(exist_ok=True)
 
-    all_article_ids = ncbi_search_and_fetch(queries, db=db, folder=intermediate_folder)
+    if with_async:
+        all_article_ids = ncbi_search_and_fetch_async(queries, db, intermediate_folder)
+    else:
+        all_article_ids = ncbi_search_and_fetch(queries, db=db, folder=intermediate_folder)
 
     # 3. Deduplicates article records
     merged_results = merge_article_ids(all_article_ids)
