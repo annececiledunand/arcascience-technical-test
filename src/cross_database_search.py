@@ -1,17 +1,18 @@
 from collections import Counter
-from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from loguru import logger
 
-from src.eutils_retrieval.api import NCBIDatabase
+from src.eutils_retrieval.api import NCBIDatabase, execute_parallel_limited
 from src.eutils_retrieval.extract import extract_all_db_article_ids
 from src.eutils_retrieval.search import (
     ArticleIds,
     StorageInfos,
     fetch_all_stored_articles,
+    fetch_all_stored_articles_async,
     search_and_store,
+    search_and_store_async,
 )
 from src.utils import add_timer_and_logger, store_data_as_json
 
@@ -57,6 +58,58 @@ def ncbi_search_and_fetch(
     return merge_article_ids(results)
 
 
+def ncbi_search_and_fetch_async(
+    queries: tuple[str, ...],
+    db: tuple[NCBIDatabase, ...] | NCBIDatabase,
+    folder: Path | None = None,
+) -> list[ArticleIds]:
+    """Search for all articles and fetch summary based on queries given.
+
+    Will de-duplicate results to avoid redundancy across databases.
+    Async version, duplicated from sync version.
+
+    Args:
+        queries (list[str]): queries to find specific articles across databases.
+        db (tuple[NCBIDatabase, ...] | NCBIDatabase): Databases source for article search.
+        folder (Path, optional): can be given to store intermediate findings for each query.
+
+    Returns:
+        list[ArticleIds]: all article ids found based on queries.
+
+    """
+    async_search_method_by_db: Callable = {
+        NCBIDatabase.PMC: pmc_search_and_fetch_async,
+        NCBIDatabase.PUB_MED: pub_med_search_and_fetch_async,
+    }.get(db, pubmed_pmc_cross_search_async)
+
+    db_label = db.value if not isinstance(db, tuple) else tuple(d.value for d in db)
+    logger.info(
+        f"Will run {len(queries)} queries on {db_label}",
+    )
+
+    iterable_args_and_kwargs = [
+        # argument given to the method for each call
+        (
+            [query],  # args: query to call in api
+            {
+                # kwargs
+                "folder": folder / str(counter)
+                if folder
+                else None,  # folder for intermediate storage for each call number
+                "prefix_log": f"({counter + 1}/{len(queries)}) ",  # prefix log for readability
+            },
+        )
+        for counter, query in enumerate(queries)
+    ]
+
+    results = execute_parallel_limited(
+        async_search_method_by_db,
+        iterable_args_and_kwargs=iterable_args_and_kwargs,
+        nb_concurrent_runs=3,
+    )
+    return merge_article_ids(*results)
+
+
 @add_timer_and_logger(task_description="PubMed and PMC databases cross-search")
 def pubmed_pmc_cross_search(query: str, folder: Path | None = None) -> list[ArticleIds]:
     """Search for articles matching the query and optional date range.
@@ -71,6 +124,26 @@ def pubmed_pmc_cross_search(query: str, folder: Path | None = None) -> list[Arti
     """
     pmc_article_ids = pmc_search_and_fetch(query, folder=folder)
     pub_med_article_ids = pub_med_search_and_fetch(query, folder=folder)
+
+    return [*pmc_article_ids, *pub_med_article_ids]
+
+
+@add_timer_and_logger(task_description="PubMed and PMC databases cross-search")
+async def pubmed_pmc_cross_search_async(query: str, folder: Path | None = None) -> list[ArticleIds]:
+    """Search for articles matching the query and optional date range.
+
+    Async version, duplicated from sync version.
+
+    Args:
+        query (str): Search query string
+        folder (Path, optional): if given, store intermediate search from each db before merging
+
+    Returns:
+        list[ArticleIds]: List of dictionaries containing article information
+
+    """
+    pmc_article_ids = await pmc_search_and_fetch_async(query, folder=folder)
+    pub_med_article_ids = await pub_med_search_and_fetch_async(query, folder=folder)
 
     return [*pmc_article_ids, *pub_med_article_ids]
 
@@ -108,6 +181,41 @@ def pmc_search_and_fetch(query: str, folder: Path | None = None) -> list[Article
     return pmc_article_ids
 
 
+@add_timer_and_logger(task_description="PMC database search and fetch")
+async def pmc_search_and_fetch_async(query: str, folder: Path | None = None) -> list[ArticleIds]:
+    """Search PMC database for articles matching the given query.
+
+    Async version, duplicated from sync version.
+
+    Args:
+        query (str): Search query string
+        folder (Path, optional): if given, store intermediate search from each db before merging
+
+    Returns:
+        list: List of dictionaries containing 'pmcid' and 'pmid' (when available)
+
+    """
+    storage_infos: StorageInfos = await search_and_store_async(query, db=NCBIDatabase.PMC)
+    if storage_infos is None or storage_infos["total_results"] == 0:
+        logger.info("Found no articles in PMC")
+        return []
+
+    result_set = await fetch_all_stored_articles_async(storage_infos)
+
+    if not result_set:
+        logger.info("Found no articles in PMC")
+        return []
+
+    pmc_article_ids = extract_all_db_article_ids(result_set, db=NCBIDatabase.PMC)
+
+    logger.info(f"Found {len(pmc_article_ids)} articles in PMC")
+
+    if folder:
+        store_data_as_json(pmc_article_ids, folder / f"{NCBIDatabase.PMC.value}.json")
+
+    return pmc_article_ids
+
+
 @add_timer_and_logger(task_description="PubMed database search adn fetch")
 def pub_med_search_and_fetch(query: str, folder: Path | None = None) -> list[ArticleIds]:
     """Search Pub Med database for articles matching the given query.
@@ -126,6 +234,43 @@ def pub_med_search_and_fetch(query: str, folder: Path | None = None) -> list[Art
         return []
 
     result_set = fetch_all_stored_articles(storage_infos)
+
+    if not result_set:
+        logger.info("Found no articles in PubMed")
+        return []
+
+    pub_med_article_ids = extract_all_db_article_ids(result_set, db=NCBIDatabase.PUB_MED)
+    logger.info(f"Found {len(pub_med_article_ids)} articles in PubMed")
+
+    if folder:
+        store_data_as_json(pub_med_article_ids, folder / f"{NCBIDatabase.PUB_MED.value}.json")
+
+    return pub_med_article_ids
+
+
+@add_timer_and_logger(task_description="PubMed database search adn fetch")
+async def pub_med_search_and_fetch_async(
+    query: str,
+    folder: Path | None = None,
+) -> list[ArticleIds]:
+    """Search Pub Med database for articles matching the given query.
+
+    Async version, duplicated from sync version.
+
+    Args:
+        query (str): Search query string
+        folder (Path, optional): if given, store intermediate search from each db before merging
+
+    Returns:
+        list: List of dictionaries containing 'pmcid' and 'pmid' (when available)
+
+    """
+    storage_infos: StorageInfos = await search_and_store_async(query, db=NCBIDatabase.PUB_MED)
+    if storage_infos is None or storage_infos["total_results"] == 0:
+        logger.info("Found no articles in PubMed")
+        return []
+
+    result_set = await fetch_all_stored_articles_async(storage_infos)
 
     if not result_set:
         logger.info("Found no articles in PubMed")

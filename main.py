@@ -45,6 +45,10 @@ def main(
         bool,
         typer.Option(help="Store intermediate found article ids from databases for each query."),
     ] = False,
+    with_async: Annotated[
+        bool,
+        typer.Option(help="Use async method."),
+    ] = False,
     db_name: Annotated[
         DbNameArg,
         typer.Option(help="Dbs to call for search. Default to all"),
@@ -65,6 +69,7 @@ def main(
         db=db,
         output_folder=SUBMISSION_RESULTS_FOLDER,
         store_intermediate_results=intermediate,
+        with_async=with_async,
     )
 
 
